@@ -1,14 +1,20 @@
 package whg.WraithEngine;
 
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 public class Shader
 {
 	private int _shaderId;
+	private HashMap<String,Integer> _uniforms;
 
 	public Shader(String vert, String frag)
 	{
+		_uniforms = new HashMap<>();
+		
 		int vId = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
 		int fId = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
 		
@@ -45,6 +51,12 @@ public class Shader
 		GL20.glDeleteShader(fId);
 	}
 	
+	public void loadUniform(String name)
+	{
+		int location = GL20.glGetUniformLocation(_shaderId, name);
+		_uniforms.put(name, location);
+	}
+	
 	public void bind()
 	{
 		GL20.glUseProgram(_shaderId);
@@ -58,5 +70,19 @@ public class Shader
 	public void dispose()
 	{
 		GL20.glDeleteProgram(_shaderId);
+	}
+	
+	private int getUniformLocation(String name)
+	{
+		if (_uniforms.containsKey(name))
+			return _uniforms.get(name);
+		loadUniform(name);
+		return _uniforms.get(name);
+	}
+	
+	public void setUniformMat4(String name, FloatBuffer mat)
+	{
+		int location = getUniformLocation(name);
+		GL20.glUniformMatrix4fv(location, false, mat);
 	}
 }

@@ -1,13 +1,22 @@
 package whg.WraithEngine.rendering;
 
+import java.nio.FloatBuffer;
+
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import whg.WraithEngine.Camera;
 import whg.WraithEngine.FPSLogger;
+import whg.WraithEngine.Location;
 import whg.WraithEngine.Mesh;
 import whg.WraithEngine.RenderLoop;
+import whg.WraithEngine.Screen;
 import whg.WraithEngine.Shader;
 import whg.WraithEngine.Time;
 import whg.WraithEngine.VertexData;
@@ -39,13 +48,13 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	{
 		float[] vertices = new float[]
 			{
-				-0.75f, -0.75f, 0f,
+				-0.5f, -0.5f, 0f,
 				1f, 0f, 0f,
 				
-				0.75f, -0.75f, 0f,
+				0.5f, -0.5f, 0f,
 				0f, 1f, 0f,
 
-				0f, 0.75f, 0f,
+				0f, 0.5f, 0f,
 				0f, 0f, 1f,
 			};
 		short[] triangles = new short[] {0, 1, 2};
@@ -58,11 +67,12 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	private static Shader buildShader()
 	{
 		String vert = "#version 330 core\n"
+				+ "uniform mat4 mvpMat;\n"
 				+ "layout(location = 0) in vec3 vertPos;\n"
 				+ "layout(location = 1) in vec3 vertCol;\n"
 				+ "out vec3 col;\n"
 				+ "void main(){\n"
-				+ "gl_Position = vec4(vertPos, 1.0);\n"
+				+ "gl_Position = mvpMat * vec4(vertPos, 1.0);\n"
 				+ "col = vertCol;\n"
 				+ "}";
 		String frag = "#version 330 core\n"
@@ -73,8 +83,12 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 				+ "color = vec4(c, 1.0);\n"
 				+ "}";
 		
-		return new Shader(vert, frag);
+		Shader shader = new Shader(vert, frag);
+		shader.loadUniform("mvpMat");
+		return shader;
 	}
+	
+	private Camera _camera;
 	
 	@Override
 	public void loop(Window window)
@@ -85,13 +99,25 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 
 		// INIT
 		FPSLogger fps = new FPSLogger();
-
 		GL11.glClearColor(0.2f, 0.4f, 0.8f, 1f);
 
 		Mesh mesh = buildMesh();
 		Shader shader = buildShader();
 		shader.bind();
 
+		_camera = new Camera();
+		_camera.getLocation().setPosition(new Vector3f(0f, 5f, 0f));
+		_camera.getLocation().setRotation(new Quaternionf().rotateY(0.5f));
+		
+		Location meshLocation = new Location();
+		meshLocation.setPosition(new Vector3f(0f, 0f, -10f));
+
+		FloatBuffer matrixFloatBuffer = BufferUtils.createFloatBuffer(16);
+		Matrix4f projectionMatrix = new Matrix4f();
+		Matrix4f viewMatrix = new Matrix4f();
+		Matrix4f modelMatrix = new Matrix4f();
+		Matrix4f mvpMatrix = new Matrix4f(); 
+		
 		// LOOP
 		while(!window.isRequestingClose())
 		{
@@ -102,6 +128,17 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			
 			// RENDER
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			
+			_camera.getProjectionMatrix(projectionMatrix);
+			_camera.getViewMatrix(viewMatrix);
+			meshLocation.getMatrix(modelMatrix);
+			
+			mvpMatrix.set(projectionMatrix);
+			mvpMatrix.mul(viewMatrix);
+			mvpMatrix.mul(modelMatrix);
+			mvpMatrix.get(matrixFloatBuffer);
+			shader.setUniformMat4("mvpMat", matrixFloatBuffer);
+
 			mesh.render();
 			
 			// ERROR CHECK
@@ -147,6 +184,8 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	@Override
 	public void onWindowResized(Window window, int width, int height)
 	{
+		Screen.updateSize(width, height);
+		_camera.rebuildProjectionMatrix();
 		GL11.glViewport(0, 0, width, height);
 	}
 
