@@ -133,6 +133,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 
 			updateCameraPosition();
 			updateCameraRotation();
+			updateQuitGame(window);
 			
 			// RENDER
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -235,11 +236,15 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		if (!isValid(angle))
 			angle.zero();
 		
-		System.out.println(angle);
-		
 		Quaternionf rot = new Quaternionf();
 		rot.rotateXYZ(angle.x, angle.y, angle.z);
 		_camera.getLocation().setRotation(rot);
+	}
+	
+	private void updateQuitGame(Window window)
+	{
+		if (Input.isKeyDown("escape"))
+			window.requestClose();
 	}
 	
 	private boolean isValid(Vector3f vec)
