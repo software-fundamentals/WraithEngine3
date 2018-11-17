@@ -12,7 +12,10 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import whg.WraithEngine.Camera;
+import whg.WraithEngine.DefaultKeyboardHandler;
 import whg.WraithEngine.FPSLogger;
+import whg.WraithEngine.Input;
+import whg.WraithEngine.KeyboardEventsHandler;
 import whg.WraithEngine.Location;
 import whg.WraithEngine.Mesh;
 import whg.WraithEngine.RenderLoop;
@@ -89,6 +92,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	}
 	
 	private Camera _camera;
+	private DefaultKeyboardHandler _keyboardHandler;
 	
 	@Override
 	public void loop(Window window)
@@ -125,6 +129,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			Time.updateTime();
 			fps.logFramerate();
 			window.pollEvents();
+			updatePlayerControls();
 			
 			// RENDER
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -180,6 +185,35 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		mesh.dispose();
 		shader.dispose();
 	}
+	
+	private void updatePlayerControls()
+	{
+		float delta = Time.deltaTime();
+		Vector3f velocity = new Vector3f();
+		
+		if (Input.isKeyHeld("space"))
+			velocity.y += 1f;
+		if (Input.isKeyHeld("shift"))
+			velocity.y -= 1f;
+		if (Input.isKeyHeld("w"))
+			velocity.z -= 1f;
+		if (Input.isKeyHeld("s"))
+			velocity.z += 1f;
+		if (Input.isKeyHeld("a"))
+			velocity.x -= 1f;
+		if (Input.isKeyHeld("d"))
+			velocity.x += 1f;
+		
+		if (velocity.lengthSquared() == 0f)
+			return;
+
+		velocity.normalize();
+		velocity.mul(delta).mul(7f); // 7 m/s
+		
+		Vector3f pos = _camera.getLocation().getPosition();
+		pos.add(velocity);
+		_camera.getLocation().setPosition(pos);
+	}
 
 	@Override
 	public void onWindowResized(Window window, int width, int height)
@@ -193,5 +227,13 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	public WindowEventsHandler getWindowEventsHandler()
 	{
 		return this;
+	}
+
+	@Override
+	public KeyboardEventsHandler getKeyboardEventsHandler()
+	{
+		if (_keyboardHandler == null)
+			_keyboardHandler = new DefaultKeyboardHandler();
+		return _keyboardHandler;
 	}
  }

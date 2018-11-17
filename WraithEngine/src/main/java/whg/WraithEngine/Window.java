@@ -177,7 +177,11 @@ public class Window
 		GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) -> {
 			_eventQueue.addEvent(new WindowResizeEvent(this, width, height));
 		});
-	}
+
+		GLFW.glfwSetKeyCallback(_windowId, (long window, int key, int scancode, int action, int mods) -> {
+			_eventQueue.addEvent(new KeyPressedEvent(this, key, action, mods));
+		});
+}
 	
 	public void destroy()
 	{
