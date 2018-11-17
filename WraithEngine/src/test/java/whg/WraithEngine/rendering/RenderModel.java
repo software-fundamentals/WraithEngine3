@@ -3,7 +3,6 @@ package whg.WraithEngine.rendering;
 import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
@@ -11,9 +10,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import whg.WraithEngine.Camera;
 import whg.WraithEngine.DefaultInputHandler;
 import whg.WraithEngine.FPSLogger;
+import whg.WraithEngine.FirstPersonCamera;
 import whg.WraithEngine.Input;
 import whg.WraithEngine.KeyboardEventsHandler;
 import whg.WraithEngine.Location;
@@ -50,18 +49,68 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	
 	private static Mesh buildMesh()
 	{
-		float[] vertices = new float[]
+		int gridSize = 7;
+		float cellSize = 5f;
+		float cellBorderSize = 1f;
+		float cellCenterSize = cellSize - cellBorderSize;
+		
+		int cellCount = (int)Math.pow(gridSize * 2 + 1, 2);
+		float[] vertices = new float[cellCount * 4 * 6];
+		short[] triangles = new short[cellCount * 6];
+		
+		int vertIndex = 0;
+		int triIndex = 0;
+		short quadCount = 0;
+		for (int x = -gridSize; x <= gridSize; x++)
+		{
+			for (int z = -gridSize; z <= gridSize; z++)
 			{
-				-0.5f, -0.5f, 0f,
-				1f, 0f, 0f,
-				
-				0.5f, -0.5f, 0f,
-				0f, 1f, 0f,
+				float a = x * cellSize + cellBorderSize;
+				float b = z * cellSize + cellBorderSize;
 
-				0f, 0.5f, 0f,
-				0f, 0f, 1f,
-			};
-		short[] triangles = new short[] {0, 1, 2};
+				vertices[vertIndex++] = a;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = b;
+
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+
+				vertices[vertIndex++] = a + cellCenterSize;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = b;
+
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+
+				vertices[vertIndex++] = a + cellCenterSize;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = b + cellCenterSize;
+
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+
+				vertices[vertIndex++] = a;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = b + cellCenterSize;
+
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				
+				triangles[triIndex++] = (short) (quadCount * 4 + 0);
+				triangles[triIndex++] = (short) (quadCount * 4 + 1);
+				triangles[triIndex++] = (short) (quadCount * 4 + 2);
+				triangles[triIndex++] = (short) (quadCount * 4 + 0);
+				triangles[triIndex++] = (short) (quadCount * 4 + 2);
+				triangles[triIndex++] = (short) (quadCount * 4 + 3);
+				
+				quadCount++;
+			}
+		}
+
 		int[] attribs = new int[] {3, 3};
 		
 		VertexData data = new VertexData(vertices, triangles, attribs);
@@ -92,7 +141,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		return shader;
 	}
 	
-	private Camera _camera;
+	private FirstPersonCamera _camera;
 	private DefaultInputHandler _inputHandler;
 	
 	@Override
@@ -110,9 +159,8 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		Shader shader = buildShader();
 		shader.bind();
 
-		_camera = new Camera();
+		_camera = new FirstPersonCamera();
 		_camera.getLocation().setPosition(new Vector3f(0f, 5f, 0f));
-		_camera.getLocation().setRotation(new Quaternionf().rotateY(0.5f));
 		
 		Location meshLocation = new Location();
 		meshLocation.setPosition(new Vector3f(0f, 0f, -10f));
@@ -132,7 +180,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			window.pollEvents();
 
 			updateCameraPosition();
-			updateCameraRotation();
+			_camera.updateCameraRotation();
 			updateQuitGame(window);
 			
 			// RENDER
@@ -196,10 +244,6 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		Vector3f velocity = new Vector3f();
 		float movementSpeed = 7f;
 		
-		if (Input.isKeyHeld("space"))
-			velocity.y += 1f;
-		if (Input.isKeyHeld("shift"))
-			velocity.y -= 1f;
 		if (Input.isKeyHeld("w"))
 			velocity.z -= 1f;
 		if (Input.isKeyHeld("s"))
@@ -209,62 +253,32 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		if (Input.isKeyHeld("d"))
 			velocity.x += 1f;
 		
+		if (velocity.lengthSquared() != 0f)
+		{
+			velocity.normalize();
+			velocity.mulDirection(_camera.getLocation().getMatrix());
+		}
+
+		velocity.y = 0f;
+		if (Input.isKeyHeld("space"))
+			velocity.y += 1f;
+		if (Input.isKeyHeld("shift"))
+			velocity.y -= 1f;
+
 		if (velocity.lengthSquared() == 0f)
 			return;
-
-		velocity.normalize();
-		velocity.mulDirection(_camera.getLocation().getMatrix());
-		velocity.mul(Time.deltaTime()).mul(movementSpeed); // 7 m/s
+		
+		velocity.mul(Time.deltaTime()).mul(movementSpeed);
 		
 		Vector3f pos = _camera.getLocation().getPosition();
 		pos.add(velocity);
 		_camera.getLocation().setPosition(pos);
 	}
 	
-	private void updateCameraRotation()
-	{
-		float mouseSensitivity = 10f;
-		float yaw = Input.getDeltaMouseX() * Time.deltaTime() * mouseSensitivity;
-		float pitch = Input.getDeltaMouseY() * Time.deltaTime() * mouseSensitivity;
-		
-		Vector3f angle = new Vector3f();
-		_camera.getLocation().getRotation().getEulerAnglesXYZ(angle);
-		angle.x = clamp(angle.x + pitch, (float)Math.toRadians(-89f), (float)Math.toRadians(89f));
-		angle.y = (angle.y + yaw) % ((float)Math.PI * 2f);
-		angle.z = 0f;
-		
-		if (!isValid(angle))
-			angle.zero();
-		
-		Quaternionf rot = new Quaternionf();
-		rot.rotateXYZ(angle.x, angle.y, angle.z);
-		_camera.getLocation().setRotation(rot);
-	}
-	
 	private void updateQuitGame(Window window)
 	{
 		if (Input.isKeyDown("escape"))
 			window.requestClose();
-	}
-	
-	private boolean isValid(Vector3f vec)
-	{
-		if (Float.isNaN(vec.x))
-			return false;
-		if (Float.isNaN(vec.y))
-			return false;
-		if (Float.isNaN(vec.z))
-			return false;
-		return true;
-	}
-	
-	private float clamp(float x, float min, float max)
-	{
-		if (x < min)
-			return min;
-		if (x > max)
-			return max;
-		return x;
 	}
 
 	@Override
