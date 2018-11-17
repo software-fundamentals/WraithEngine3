@@ -2,7 +2,7 @@ package whg.WraithEngine;
 
 import org.lwjgl.glfw.GLFW;
 
-public class DefaultKeyboardHandler implements KeyboardEventsHandler
+public class DefaultInputHandler implements KeyboardEventsHandler, MouseEventsHandler
 {
 	@Override
 	public void onKeyPressed(int key, int action, int mods)
@@ -21,5 +21,11 @@ public class DefaultKeyboardHandler implements KeyboardEventsHandler
 		}
 
 		Input.setKeyPressed(key, pressed);
+	}
+
+	@Override
+	public void onMouseMoved(float mouseX, float mouseY)
+	{
+		Input.setMousePosition(mouseX, mouseY);
 	}
 }

@@ -9,6 +9,8 @@ public class Input
 	private static boolean[] _keys = new boolean[350];
 	private static boolean[] _keysLastFrame = new boolean[350];
 	private static HashMap<String,Integer> _keyMap;
+	private static float _mouseX, _mouseY;
+	private static float _lastMouseX, _lastMouseY;
 	
 	static
 	{
@@ -155,10 +157,38 @@ public class Input
 	{
 		for (int i = 0; i < _keys.length; i++)
 			_keysLastFrame[i] = _keys[i];
+		_lastMouseX = _mouseX;
+		_lastMouseY = _mouseY;
 	}
 	
 	public static int getKeyId(String name)
 	{
 		return _keyMap.get(name);
+	}
+	
+	public static void setMousePosition(float mouseX, float mouseY)
+	{
+		_mouseX = mouseX;
+		_mouseY = mouseY;
+	}
+	
+	public static float getMouseX()
+	{
+		return _mouseX;
+	}
+	
+	public static float getMouseY()
+	{
+		return _mouseY;
+	}
+	
+	public static float getDeltaMouseX()
+	{
+		return _mouseX - _lastMouseX;
+	}
+	
+	public static float getDeltaMouseY()
+	{
+		return _mouseY - _lastMouseY;
 	}
 }

@@ -7,4 +7,6 @@ public interface RenderLoop
 	public WindowEventsHandler getWindowEventsHandler();
 	
 	public KeyboardEventsHandler getKeyboardEventsHandler();
+	
+	public MouseEventsHandler getMouseEventsHandler();
 }

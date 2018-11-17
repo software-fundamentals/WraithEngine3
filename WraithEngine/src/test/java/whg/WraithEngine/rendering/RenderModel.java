@@ -12,12 +12,13 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import whg.WraithEngine.Camera;
-import whg.WraithEngine.DefaultKeyboardHandler;
+import whg.WraithEngine.DefaultInputHandler;
 import whg.WraithEngine.FPSLogger;
 import whg.WraithEngine.Input;
 import whg.WraithEngine.KeyboardEventsHandler;
 import whg.WraithEngine.Location;
 import whg.WraithEngine.Mesh;
+import whg.WraithEngine.MouseEventsHandler;
 import whg.WraithEngine.RenderLoop;
 import whg.WraithEngine.Screen;
 import whg.WraithEngine.Shader;
@@ -92,7 +93,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	}
 	
 	private Camera _camera;
-	private DefaultKeyboardHandler _keyboardHandler;
+	private DefaultInputHandler _inputHandler;
 	
 	@Override
 	public void loop(Window window)
@@ -129,7 +130,9 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			Time.updateTime();
 			fps.logFramerate();
 			window.pollEvents();
-			updatePlayerControls();
+
+			updateCameraPosition();
+			updateCameraRotation();
 			
 			// RENDER
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -178,6 +181,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			}
 			
 			// FINISH
+			Input.endFrame();
 			window.endFrame();
 		}
 		
@@ -186,10 +190,10 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		shader.dispose();
 	}
 	
-	private void updatePlayerControls()
+	private void updateCameraPosition()
 	{
-		float delta = Time.deltaTime();
 		Vector3f velocity = new Vector3f();
+		float movementSpeed = 7f;
 		
 		if (Input.isKeyHeld("space"))
 			velocity.y += 1f;
@@ -209,11 +213,53 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 
 		velocity.normalize();
 		velocity.mulDirection(_camera.getLocation().getMatrix());
-		velocity.mul(delta).mul(7f); // 7 m/s
+		velocity.mul(Time.deltaTime()).mul(movementSpeed); // 7 m/s
 		
 		Vector3f pos = _camera.getLocation().getPosition();
 		pos.add(velocity);
 		_camera.getLocation().setPosition(pos);
+	}
+	
+	private void updateCameraRotation()
+	{
+		float mouseSensitivity = 10f;
+		float yaw = Input.getDeltaMouseX() * Time.deltaTime() * mouseSensitivity;
+		float pitch = Input.getDeltaMouseY() * Time.deltaTime() * mouseSensitivity;
+		
+		Vector3f angle = new Vector3f();
+		_camera.getLocation().getRotation().getEulerAnglesXYZ(angle);
+		angle.x = clamp(angle.x + pitch, (float)Math.toRadians(-89f), (float)Math.toRadians(89f));
+		angle.y = (angle.y + yaw) % ((float)Math.PI * 2f);
+		angle.z = 0f;
+		
+		if (!isValid(angle))
+			angle.zero();
+		
+		System.out.println(angle);
+		
+		Quaternionf rot = new Quaternionf();
+		rot.rotateXYZ(angle.x, angle.y, angle.z);
+		_camera.getLocation().setRotation(rot);
+	}
+	
+	private boolean isValid(Vector3f vec)
+	{
+		if (Float.isNaN(vec.x))
+			return false;
+		if (Float.isNaN(vec.y))
+			return false;
+		if (Float.isNaN(vec.z))
+			return false;
+		return true;
+	}
+	
+	private float clamp(float x, float min, float max)
+	{
+		if (x < min)
+			return min;
+		if (x > max)
+			return max;
+		return x;
 	}
 
 	@Override
@@ -233,8 +279,16 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 	@Override
 	public KeyboardEventsHandler getKeyboardEventsHandler()
 	{
-		if (_keyboardHandler == null)
-			_keyboardHandler = new DefaultKeyboardHandler();
-		return _keyboardHandler;
+		if (_inputHandler == null)
+			_inputHandler = new DefaultInputHandler();
+		return _inputHandler;
+	}
+
+	@Override
+	public MouseEventsHandler getMouseEventsHandler()
+	{
+		if (_inputHandler == null)
+			_inputHandler = new DefaultInputHandler();
+		return _inputHandler;
 	}
  }
