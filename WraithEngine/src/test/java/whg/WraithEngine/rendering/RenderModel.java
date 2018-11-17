@@ -208,6 +208,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			return;
 
 		velocity.normalize();
+		velocity.mulDirection(_camera.getLocation().getMatrix());
 		velocity.mul(delta).mul(7f); // 7 m/s
 		
 		Vector3f pos = _camera.getLocation().getPosition();
