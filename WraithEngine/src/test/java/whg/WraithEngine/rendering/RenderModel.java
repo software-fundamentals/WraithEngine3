@@ -1,5 +1,6 @@
 package whg.WraithEngine.rendering;
 
+import java.io.File;
 import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
@@ -17,6 +18,7 @@ import whg.WraithEngine.Input;
 import whg.WraithEngine.KeyboardEventsHandler;
 import whg.WraithEngine.Location;
 import whg.WraithEngine.Mesh;
+import whg.WraithEngine.ModelLoader;
 import whg.WraithEngine.MouseEventsHandler;
 import whg.WraithEngine.RenderLoop;
 import whg.WraithEngine.Screen;
@@ -55,7 +57,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		float cellCenterSize = cellSize - cellBorderSize;
 		
 		int cellCount = (int)Math.pow(gridSize * 2 + 1, 2);
-		float[] vertices = new float[cellCount * 4 * 6];
+		float[] vertices = new float[cellCount * 4 * 3];
 		short[] triangles = new short[cellCount * 6];
 		
 		int vertIndex = 0;
@@ -72,34 +74,18 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b;
 
-				vertices[vertIndex++] = 1f;
-				vertices[vertIndex++] = 0f;
-				vertices[vertIndex++] = 0f;
-
 				vertices[vertIndex++] = a + cellCenterSize;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b;
 
-				vertices[vertIndex++] = 0f;
-				vertices[vertIndex++] = 1f;
-				vertices[vertIndex++] = 0f;
-
 				vertices[vertIndex++] = a + cellCenterSize;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b + cellCenterSize;
-
-				vertices[vertIndex++] = 1f;
-				vertices[vertIndex++] = 0f;
-				vertices[vertIndex++] = 0f;
 
 				vertices[vertIndex++] = a;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b + cellCenterSize;
 
-				vertices[vertIndex++] = 0f;
-				vertices[vertIndex++] = 0f;
-				vertices[vertIndex++] = 1f;
-				
 				triangles[triIndex++] = (short) (quadCount * 4 + 0);
 				triangles[triIndex++] = (short) (quadCount * 4 + 1);
 				triangles[triIndex++] = (short) (quadCount * 4 + 2);
@@ -111,7 +97,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			}
 		}
 
-		int[] attribs = new int[] {3, 3};
+		int[] attribs = new int[] {3};
 		
 		VertexData data = new VertexData(vertices, triangles, attribs);
 		return new Mesh(data);
@@ -122,18 +108,13 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		String vert = "#version 330 core\n"
 				+ "uniform mat4 mvpMat;\n"
 				+ "layout(location = 0) in vec3 vertPos;\n"
-				+ "layout(location = 1) in vec3 vertCol;\n"
-				+ "out vec3 col;\n"
 				+ "void main(){\n"
 				+ "gl_Position = mvpMat * vec4(vertPos, 1.0);\n"
-				+ "col = vertCol;\n"
 				+ "}";
 		String frag = "#version 330 core\n"
-				+ "in vec3 col;\n"
 				+ "out vec4 color;\n"
 				+ "void main(){\n"
-				+ "vec3 c = pow(col, vec3(1.0 / 2.2));\n" // Convert Linear Color Space
-				+ "color = vec4(c, 1.0);\n"
+				+ "color = vec4(0.7, 0.7, 0.7, 1.0);\n"
 				+ "}";
 		
 		Shader shader = new Shader(vert, frag);
@@ -154,16 +135,23 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		// INIT
 		FPSLogger fps = new FPSLogger();
 		GL11.glClearColor(0.2f, 0.4f, 0.8f, 1f);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-		Mesh mesh = buildMesh();
+		Mesh floorMesh = buildMesh();
+		Mesh columnMesh = ModelLoader.loadModel(new File("C:\\Users\\TheDudeFromCI\\Downloads\\twist_object.fbx"));
+
 		Shader shader = buildShader();
 		shader.bind();
 
 		_camera = new FirstPersonCamera();
+		_camera.setMouseSensitivity(1f);
 		_camera.getLocation().setPosition(new Vector3f(0f, 5f, 0f));
 		
-		Location meshLocation = new Location();
-		meshLocation.setPosition(new Vector3f(0f, 0f, -10f));
+		Location floorMeshLocation = new Location();
+		floorMeshLocation.setPosition(new Vector3f(0f, 0f, 0f));
+
+		Location columnMeshLocation = new Location();
+		columnMeshLocation.setPosition(new Vector3f(0f, 0f, 0f));
 
 		FloatBuffer matrixFloatBuffer = BufferUtils.createFloatBuffer(16);
 		Matrix4f projectionMatrix = new Matrix4f();
@@ -184,19 +172,27 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			updateQuitGame(window);
 			
 			// RENDER
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			
 			_camera.getProjectionMatrix(projectionMatrix);
 			_camera.getViewMatrix(viewMatrix);
-			meshLocation.getMatrix(modelMatrix);
 			
+			floorMeshLocation.getMatrix(modelMatrix);
 			mvpMatrix.set(projectionMatrix);
 			mvpMatrix.mul(viewMatrix);
 			mvpMatrix.mul(modelMatrix);
 			mvpMatrix.get(matrixFloatBuffer);
 			shader.setUniformMat4("mvpMat", matrixFloatBuffer);
 
-			mesh.render();
+			floorMesh.render();
+
+			columnMeshLocation.getMatrix(modelMatrix);
+			mvpMatrix.set(projectionMatrix);
+			mvpMatrix.mul(viewMatrix);
+			mvpMatrix.mul(modelMatrix);
+			mvpMatrix.get(matrixFloatBuffer);
+			shader.setUniformMat4("mvpMat", matrixFloatBuffer);
+			columnMesh.render();
 			
 			// ERROR CHECK
 			int error;
@@ -235,7 +231,8 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		}
 		
 		// DISPOSE
-		mesh.dispose();
+		floorMesh.dispose();
+		columnMesh.dispose();
 		shader.dispose();
 	}
 	
