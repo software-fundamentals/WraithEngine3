@@ -39,6 +39,11 @@ public class Location
 		this(new Vector3f(), new Quaternionf(), new Vector3f(1f, 1f, 1f));
 	}
 	
+	public Location(Location location)
+	{
+		this(location._position, location._rotation, location._scale);
+	}
+	
 	private void updateMatrix()
 	{
 		_transformMatrix.identity();

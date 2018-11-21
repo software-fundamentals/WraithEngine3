@@ -1,22 +1,22 @@
 package whg.WraithEngine.rendering;
 
 import java.io.File;
-import java.nio.FloatBuffer;
 
-import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import whg.WraithEngine.DefaultInputHandler;
+import whg.WraithEngine.Entity;
 import whg.WraithEngine.FPSLogger;
 import whg.WraithEngine.FirstPersonCamera;
 import whg.WraithEngine.Input;
 import whg.WraithEngine.KeyboardEventsHandler;
 import whg.WraithEngine.Location;
+import whg.WraithEngine.Material;
 import whg.WraithEngine.Mesh;
 import whg.WraithEngine.ModelLoader;
 import whg.WraithEngine.MouseEventsHandler;
@@ -142,22 +142,16 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 
 		Shader shader = buildShader();
 		shader.bind();
+		
+		Material baseMaterial = new Material(shader);
+		Entity floor = new Entity(floorMesh, new Location(), baseMaterial);
+		Entity column = new Entity(columnMesh, new Location(), baseMaterial);
+		
+		column.getLocation().setRotation(new Quaternionf(-1f, 0f, 0f, 1f));
 
 		_camera = new FirstPersonCamera();
 		_camera.setMouseSensitivity(1f);
 		_camera.getLocation().setPosition(new Vector3f(0f, 5f, 0f));
-		
-		Location floorMeshLocation = new Location();
-		floorMeshLocation.setPosition(new Vector3f(0f, 0f, 0f));
-
-		Location columnMeshLocation = new Location();
-		columnMeshLocation.setPosition(new Vector3f(0f, 0f, 0f));
-
-		FloatBuffer matrixFloatBuffer = BufferUtils.createFloatBuffer(16);
-		Matrix4f projectionMatrix = new Matrix4f();
-		Matrix4f viewMatrix = new Matrix4f();
-		Matrix4f modelMatrix = new Matrix4f();
-		Matrix4f mvpMatrix = new Matrix4f(); 
 		
 		// LOOP
 		while(!window.isRequestingClose())
@@ -174,25 +168,8 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			// RENDER
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			
-			_camera.getProjectionMatrix(projectionMatrix);
-			_camera.getViewMatrix(viewMatrix);
-			
-			floorMeshLocation.getMatrix(modelMatrix);
-			mvpMatrix.set(projectionMatrix);
-			mvpMatrix.mul(viewMatrix);
-			mvpMatrix.mul(modelMatrix);
-			mvpMatrix.get(matrixFloatBuffer);
-			shader.setUniformMat4("mvpMat", matrixFloatBuffer);
-
-			floorMesh.render();
-
-			columnMeshLocation.getMatrix(modelMatrix);
-			mvpMatrix.set(projectionMatrix);
-			mvpMatrix.mul(viewMatrix);
-			mvpMatrix.mul(modelMatrix);
-			mvpMatrix.get(matrixFloatBuffer);
-			shader.setUniformMat4("mvpMat", matrixFloatBuffer);
-			columnMesh.render();
+			floor.render(_camera);
+			column.render(_camera);
 			
 			// ERROR CHECK
 			int error;
