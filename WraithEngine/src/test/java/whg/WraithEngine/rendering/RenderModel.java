@@ -28,6 +28,7 @@ import whg.WraithEngine.VertexData;
 import whg.WraithEngine.Window;
 import whg.WraithEngine.WindowEventsHandler;
 import whg.WraithEngine.WindowManager;
+import whg.WraithEngine.World;
 
 public class RenderModel implements RenderLoop, WindowEventsHandler
 {
@@ -153,6 +154,10 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		_camera.setMouseSensitivity(1f);
 		_camera.getLocation().setPosition(new Vector3f(0f, 5f, 0f));
 		
+		World world = new World(_camera);
+		world.addEntity(floor);
+		world.addEntity(column);
+		
 		// LOOP
 		while(!window.isRequestingClose())
 		{
@@ -165,11 +170,12 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 			_camera.updateCameraRotation();
 			updateQuitGame(window);
 			
+			world.update();
+			
 			// RENDER
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			
-			floor.render(_camera);
-			column.render(_camera);
+			world.render();
 			
 			// ERROR CHECK
 			int error;
