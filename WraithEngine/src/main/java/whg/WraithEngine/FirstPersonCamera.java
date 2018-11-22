@@ -3,11 +3,12 @@ package whg.WraithEngine;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class FirstPersonCamera extends Camera
+public class FirstPersonCamera implements Entity, Updateable
 {
 	private static final float MAX_ANGLE = (float)Math.toRadians(89);
 	private static final float TAU = (float)Math.PI * 2f;
 
+	private Camera _camera;
 	private Vector3f _baseRotation;
 	private Vector3f _extraRotation;
 	private float _mouseSensitivity = 10f;
@@ -15,8 +16,9 @@ public class FirstPersonCamera extends Camera
 	private Vector3f _rotationBuffer = new Vector3f();
 	private Quaternionf _rotationStorageBuffer = new Quaternionf();
 	
-	public FirstPersonCamera()
+	public FirstPersonCamera(Camera camera)
 	{
+		_camera = camera;
 		_baseRotation = new Vector3f();
 		_extraRotation = new Vector3f();
 	}
@@ -53,7 +55,7 @@ public class FirstPersonCamera extends Camera
 		return getExtraRotation(new Vector3f());
 	}
 	
-	public void updateCameraRotation()
+	private void updateCameraRotation()
 	{
 		float yaw = Input.getDeltaMouseX() * Time.deltaTime() * _mouseSensitivity;
 		float pitch = Input.getDeltaMouseY() * Time.deltaTime() * _mouseSensitivity;
@@ -72,7 +74,43 @@ public class FirstPersonCamera extends Camera
 		_rotationStorageBuffer.rotateY(_rotationBuffer.y);
 		_rotationStorageBuffer.rotateX(_rotationBuffer.x);
 		_rotationStorageBuffer.rotateZ(_rotationBuffer.z);
-		getLocation().setRotation(_rotationStorageBuffer);
+		_camera.getLocation().setRotation(_rotationStorageBuffer);
+	}
+	
+	private void updateCameraPosition()
+	{
+		Vector3f velocity = new Vector3f();
+		float movementSpeed = 7f;
+		
+		if (Input.isKeyHeld("w"))
+			velocity.z -= 1f;
+		if (Input.isKeyHeld("s"))
+			velocity.z += 1f;
+		if (Input.isKeyHeld("a"))
+			velocity.x -= 1f;
+		if (Input.isKeyHeld("d"))
+			velocity.x += 1f;
+		
+		if (velocity.lengthSquared() != 0f)
+		{
+			velocity.normalize();
+			velocity.mulDirection(_camera.getLocation().getMatrix());
+		}
+
+		velocity.y = 0f;
+		if (Input.isKeyHeld("space"))
+			velocity.y += 1f;
+		if (Input.isKeyHeld("shift"))
+			velocity.y -= 1f;
+
+		if (velocity.lengthSquared() == 0f)
+			return;
+		
+		velocity.mul(Time.deltaTime()).mul(movementSpeed);
+		
+		Vector3f pos = _camera.getLocation().getPosition();
+		pos.add(velocity);
+		_camera.getLocation().setPosition(pos);
 	}
 	
 	private boolean isValid(Vector3f vec)
@@ -93,5 +131,18 @@ public class FirstPersonCamera extends Camera
 		if (x > max)
 			return max;
 		return x;
+	}
+
+	@Override
+	public Location getLocation()
+	{
+		return _camera.getLocation();
+	}
+
+	@Override
+	public void update()
+	{
+		updateCameraPosition();
+		updateCameraRotation();
 	}
 }

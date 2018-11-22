@@ -2,6 +2,8 @@ package whg.WraithEngine;
 
 import java.util.ArrayList;
 
+import org.lwjgl.opengl.GL11;
+
 public class World
 {
 	private Camera _camera;
@@ -39,6 +41,11 @@ public class World
 		
 		for (Entity e : _toAdd)
 			_entities.add(e);
+		_toAdd.clear();
+		
+		for (Entity e : _entities)
+			if (e instanceof Updateable)
+				((Updateable) e).update();
 	}
 	
 	public Camera getCamera()
@@ -48,7 +55,10 @@ public class World
 	
 	public void render()
 	{
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
 		for (Entity e : _entities)
-			e.render(_camera);
+			if (e instanceof Renderable)
+				((Renderable)e).render(_camera);
 	}
 }

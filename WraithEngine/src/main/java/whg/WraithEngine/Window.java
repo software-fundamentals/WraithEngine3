@@ -118,7 +118,15 @@ public class Window
 		t.start();
 		
 		while (!GLFW.glfwWindowShouldClose(_windowId))
+		{
 			GLFW.glfwWaitEvents();
+			synchronized (_lock)
+			{
+				if (_destroyed)
+					GLFW.glfwSetWindowShouldClose(_windowId, true);
+			}
+		}
+		requestClose();
 
 		_eventQueue.clearEvents();
 	}
@@ -135,7 +143,6 @@ public class Window
 	{
 		synchronized (_lock)
 		{
-			GLFW.glfwSetWindowShouldClose(_windowId, true);
 			_destroyed = true;
 		}
 	}
