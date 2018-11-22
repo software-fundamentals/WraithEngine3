@@ -9,12 +9,13 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-public class Mesh
+public class Mesh implements DisposableResource
 {
 	private int _vboId;
 	private int _vaoId;
 	private int _indexId;
 	private int _indexCount;
+	private boolean _disposed;
 
 	public Mesh(VertexData vertexData)
 	{
@@ -55,10 +56,14 @@ public class Mesh
 
 		GL30.glBindVertexArray(0);
 
+		ResourceLoader.addResource(this);
 	}
 	
 	public void render()
 	{
+		if (_disposed)
+			throw new IllegalStateException("Mesh already disposed!");
+
 		GL30.glBindVertexArray(_vaoId);
 		
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, _indexId);
@@ -70,8 +75,19 @@ public class Mesh
 	
 	public void dispose()
 	{
+		if (_disposed)
+			return;
+		
+		_disposed = true;
+		ResourceLoader.removeResource(this);
 		GL15.glDeleteBuffers(_vboId);
 		GL15.glDeleteBuffers(_indexId);
 		GL30.glDeleteVertexArrays(_vaoId);
+	}
+
+	@Override
+	public boolean isDisposed()
+	{
+		return _disposed;
 	}
 }

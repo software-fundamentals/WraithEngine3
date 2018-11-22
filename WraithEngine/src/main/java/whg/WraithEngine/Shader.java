@@ -6,10 +6,11 @@ import java.util.HashMap;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-public class Shader
+public class Shader implements DisposableResource
 {
 	private int _shaderId;
 	private HashMap<String,Integer> _uniforms;
+	private boolean _disposed;
 
 	public Shader(String vert, String frag)
 	{
@@ -49,31 +50,50 @@ public class Shader
 		
 		GL20.glDeleteShader(vId);
 		GL20.glDeleteShader(fId);
+		
+		ResourceLoader.addResource(this);
 	}
 	
 	public void loadUniform(String name)
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		int location = GL20.glGetUniformLocation(_shaderId, name);
 		_uniforms.put(name, location);
 	}
 	
 	public void bind()
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		GL20.glUseProgram(_shaderId);
 	}
 	
 	public void unbind()
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		GL20.glUseProgram(0);
 	}
 	
 	public void dispose()
 	{
+		if (_disposed)
+			return;
+
+		_disposed = true;
+		ResourceLoader.removeResource(this);
 		GL20.glDeleteProgram(_shaderId);
 	}
 	
 	private int getUniformLocation(String name)
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		if (_uniforms.containsKey(name))
 			return _uniforms.get(name);
 		loadUniform(name);
@@ -82,7 +102,16 @@ public class Shader
 	
 	public void setUniformMat4(String name, FloatBuffer mat)
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		int location = getUniformLocation(name);
 		GL20.glUniformMatrix4fv(location, false, mat);
+	}
+
+	@Override
+	public boolean isDisposed()
+	{
+		return _disposed;
 	}
 }

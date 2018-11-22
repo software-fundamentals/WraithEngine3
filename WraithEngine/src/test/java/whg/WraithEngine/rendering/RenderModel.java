@@ -21,6 +21,7 @@ import whg.WraithEngine.Mesh;
 import whg.WraithEngine.ModelLoader;
 import whg.WraithEngine.MouseEventsHandler;
 import whg.WraithEngine.RenderLoop;
+import whg.WraithEngine.ResourceLoader;
 import whg.WraithEngine.Screen;
 import whg.WraithEngine.Shader;
 import whg.WraithEngine.Time;
@@ -214,9 +215,7 @@ public class RenderModel implements RenderLoop, WindowEventsHandler
 		}
 		
 		// DISPOSE
-		floorMesh.dispose();
-		columnMesh.dispose();
-		shader.dispose();
+		ResourceLoader.disposeAllResources();
 	}
 	
 	private void updateCameraPosition()
