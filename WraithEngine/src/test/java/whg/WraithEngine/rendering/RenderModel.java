@@ -23,6 +23,7 @@ import whg.WraithEngine.ModelScene;
 import whg.WraithEngine.QuitGameListener;
 import whg.WraithEngine.Shader;
 import whg.WraithEngine.Skeleton;
+import whg.WraithEngine.SkinnedMesh;
 import whg.WraithEngine.Universe;
 import whg.WraithEngine.VertexData;
 import whg.WraithEngine.Window;
@@ -68,7 +69,7 @@ public class RenderModel
 				ModelScene scene = ModelLoader.loadModel(new File(path));
 				
 				Mesh floorMesh = buildMesh();
-				Mesh columnMesh = scene._meshes.get(0);
+				SkinnedMesh columnMesh = (SkinnedMesh)scene._meshes.get(0);
 
 				Shader shader = buildShader();
 				shader.bind();
@@ -82,7 +83,7 @@ public class RenderModel
 				world.addEntity(floor);
 				world.addEntity(column);
 				
-				Skeleton skeleton = scene._skeletons.get(0);
+				Skeleton skeleton = columnMesh.getSkeleton();
 				
 				FloatBuffer buf = BufferUtils.createFloatBuffer(16 * 128);
 				

@@ -134,11 +134,10 @@ public class ModelLoader
 		
 		int[] attributes = new int[] {3, 3, 4, 4};
 		VertexData vertexData = new VertexData(vertices, triangles, attributes);
-		Mesh we_mesh = new Mesh(vertexData);
+		SkinnedMesh we_mesh = new SkinnedMesh(vertexData, skeleton);
 		
 		ModelScene we_scene = new ModelScene();
 		we_scene._meshes.add(we_mesh);
-		we_scene._skeletons.add(skeleton);
 		return we_scene;
 	}
 	
