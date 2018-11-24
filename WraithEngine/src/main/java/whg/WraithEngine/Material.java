@@ -37,6 +37,6 @@ public class Material
 		_mvpMatrix.mul(_viewMatrix);
 		_mvpMatrix.mul(_modelMatrix);
 		_mvpMatrix.get(_matrixFloatBuffer);
-		_shader.setUniformMat4("mvpMat", _matrixFloatBuffer);
+		_shader.setUniformMat4("_mvpMat", _matrixFloatBuffer);
 	}
 }

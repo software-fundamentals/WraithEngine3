@@ -1,13 +1,17 @@
 package whg.WraithEngine.rendering;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.FloatBuffer;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
-
 import whg.WraithEngine.DefaultGameLoop;
+import whg.WraithEngine.FileUtils;
 import whg.WraithEngine.Model;
 import whg.WraithEngine.FirstPersonCamera;
 import whg.WraithEngine.InitalizerEntity;
@@ -15,8 +19,10 @@ import whg.WraithEngine.Location;
 import whg.WraithEngine.Material;
 import whg.WraithEngine.Mesh;
 import whg.WraithEngine.ModelLoader;
+import whg.WraithEngine.ModelScene;
 import whg.WraithEngine.QuitGameListener;
 import whg.WraithEngine.Shader;
+import whg.WraithEngine.Skeleton;
 import whg.WraithEngine.Universe;
 import whg.WraithEngine.VertexData;
 import whg.WraithEngine.Window;
@@ -58,8 +64,11 @@ public class RenderModel
 				
 				world.getCamera().getLocation().setPosition(new Vector3f(0f, 3f, 5f));
 				
+				String path = "C:\\Users\\TheDudeFromCI\\Downloads\\twist_object.fbx";
+				ModelScene scene = ModelLoader.loadModel(new File(path));
+				
 				Mesh floorMesh = buildMesh();
-				Mesh columnMesh = ModelLoader.loadModel(new File("C:\\Users\\TheDudeFromCI\\Downloads\\twist_object.fbx"));
+				Mesh columnMesh = scene._meshes.get(0);
 
 				Shader shader = buildShader();
 				shader.bind();
@@ -68,10 +77,52 @@ public class RenderModel
 				Model floor = new Model(floorMesh, new Location(), baseMaterial);
 				Model column = new Model(columnMesh, new Location(), baseMaterial);
 				
-				column.getLocation().setRotation(new Quaternionf(-1f, 0f, 0f, 1f));
+				column.getLocation().setRotation(new Quaternionf().rotateLocalX((float) (-Math.PI/2f)));
 				
 				world.addEntity(floor);
 				world.addEntity(column);
+				
+				Skeleton skeleton = scene._skeletons.get(0);
+				
+				FloatBuffer buf = BufferUtils.createFloatBuffer(16 * 128);
+				
+				Matrix4f parentTransform = new Matrix4f();
+				Matrix4f globalInverse = skeleton.getGlobalInverseTransform();
+
+				for (int i = 0; i < 128; i++)
+				{
+					Matrix4f transform;
+					if (i < skeleton.getBones().length)
+						transform = skeleton.getBones()[i].getDefaultPose();
+					else
+						transform = new Matrix4f();
+					
+					Matrix4f offset;
+					if (i < skeleton.getBones().length)
+						offset = skeleton.getBones()[i].getOffsetMatrix();
+					else
+						offset = new Matrix4f();
+					
+					if (i == 2)
+						transform.rotate(3.1415f / 2f, 1f, 0f, 0f);
+
+					Matrix4f globalTransform = new Matrix4f(parentTransform).mul(transform);
+
+					if (i == 10)
+					{
+						globalInverse.identity();
+						globalTransform.identity();
+					}
+					
+					Matrix4f boneMat = new Matrix4f();
+					boneMat.mul(globalInverse);
+					boneMat.mul(globalTransform);
+					boneMat.mul(offset);
+					boneMat.get(i * 16, buf);
+					
+					parentTransform = globalTransform;
+				}
+				shader.setUniformMat4Array("_bones", buf);
 			}
 		});
 		
@@ -89,7 +140,8 @@ public class RenderModel
 		float cellCenterSize = cellSize - cellBorderSize;
 		
 		int cellCount = (int)Math.pow(gridSize * 2 + 1, 2);
-		float[] vertices = new float[cellCount * 4 * 3];
+		int vertexSize = 3 + 3 + 4 + 4;
+		float[] vertices = new float[cellCount * 4 * vertexSize];
 		short[] triangles = new short[cellCount * 6];
 		
 		int vertIndex = 0;
@@ -102,21 +154,89 @@ public class RenderModel
 				float a = x * cellSize + cellBorderSize;
 				float b = z * cellSize + cellBorderSize;
 
+				// Vertex 1
+				// Pos
 				vertices[vertIndex++] = a;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b;
 
+				// Normal
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+
+				// Bone Weights
+				vertices[vertIndex++] = 10f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+
+				// Vertex 2
+				// Pos
 				vertices[vertIndex++] = a + cellCenterSize;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b;
 
+				// Normal
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+
+				// Bone Weights
+				vertices[vertIndex++] = 10f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+
+				// Vertex 3
+				// Pos
 				vertices[vertIndex++] = a + cellCenterSize;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b + cellCenterSize;
 
+				// Normal
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+
+				// Bone Weights
+				vertices[vertIndex++] = 10f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+
+				// Vertex 4
+				// Pos
 				vertices[vertIndex++] = a;
 				vertices[vertIndex++] = 0f;
 				vertices[vertIndex++] = b + cellCenterSize;
+
+				// Normal
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+
+				// Bone Weights
+				vertices[vertIndex++] = 10f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 1f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
+				vertices[vertIndex++] = 0f;
 
 				triangles[triIndex++] = (short) (quadCount * 4 + 0);
 				triangles[triIndex++] = (short) (quadCount * 4 + 1);
@@ -129,7 +249,7 @@ public class RenderModel
 			}
 		}
 
-		int[] attribs = new int[] {3};
+		int[] attribs = new int[] {3, 3, 4, 4};
 		
 		VertexData data = new VertexData(vertices, triangles, attribs);
 		return new Mesh(data);
@@ -137,20 +257,22 @@ public class RenderModel
 	
 	private static Shader buildShader()
 	{
-		String vert = "#version 330 core\n"
-				+ "uniform mat4 mvpMat;\n"
-				+ "layout(location = 0) in vec3 vertPos;\n"
-				+ "void main(){\n"
-				+ "gl_Position = mvpMat * vec4(vertPos, 1.0);\n"
-				+ "}";
-		String frag = "#version 330 core\n"
-				+ "out vec4 color;\n"
-				+ "void main(){\n"
-				+ "color = vec4(0.7, 0.7, 0.7, 1.0);\n"
-				+ "}";
+		String vert, frag;
+		try
+		{
+			vert = FileUtils.loadFileAsString(FileUtils.getResource("shader.vert"));
+			frag = FileUtils.loadFileAsString(FileUtils.getResource("shader.frag"));
+		}
+		catch(IOException exception)
+		{
+			System.err.println("Failed to load shader!");
+			// TODO Return default shader
+			return null;
+		}
 		
 		Shader shader = new Shader(vert, frag);
-		shader.loadUniform("mvpMat");
+		shader.loadUniform("_mvpMat");
+		shader.loadUniform("_bones");
 		return shader;
 	}
  }
