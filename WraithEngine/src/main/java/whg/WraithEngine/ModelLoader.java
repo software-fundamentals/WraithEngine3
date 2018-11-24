@@ -90,7 +90,7 @@ public class ModelLoader
 			Matrix4f boneOffset = assimpMatrix(bone.mOffsetMatrix());
 			Matrix4f bonePose = findDefaultPose(scene.mRootNode(), boneName);
 
-			bones[b] = new Bone(boneName, boneOffset, bonePose);
+			bones[b] = new Bone(boneName, boneOffset, bonePose, null);
 
 			for (int w = 0; w < bone.mNumWeights(); w++)
 			{
@@ -127,18 +127,98 @@ public class ModelLoader
 			}
 		}
 		
+		Bone rootBone = findRootBone(bones, scene.mRootNode());
+
 		AIMatrix4x4 inverseRootTransformRaw = scene.mRootNode().mTransformation();
 		Matrix4f inverseRootTransform = assimpMatrix(inverseRootTransformRaw);
-		
-		Skeleton skeleton = new Skeleton(inverseRootTransform, bones, new Matrix4f());
+
+		Skeleton skeleton = new Skeleton(inverseRootTransform, bones, rootBone);
 		
 		int[] attributes = new int[] {3, 3, 4, 4};
 		VertexData vertexData = new VertexData(vertices, triangles, attributes);
 		SkinnedMesh we_mesh = new SkinnedMesh(vertexData, skeleton);
 		
+		scene.free();
+		
+		System.out.println("Skeleton:");
+		logSkeleton(rootBone, 0);
+		logBones(bones);
+		
 		ModelScene we_scene = new ModelScene();
 		we_scene._meshes.add(we_mesh);
 		return we_scene;
+	}
+	
+	private static Bone findRootBone(Bone[] bones, AINode node)
+	{
+		Bone b = findBone(bones, node.mName().dataString());
+		
+		if (b != null)
+		{
+			buildBoneHeirarchy(bones, b, node);
+			return b;
+		}
+		
+		for (int i = 0; i < node.mNumChildren(); i++)
+		{
+			AINode n = AINode.create(node.mChildren().get(i));
+			b = findRootBone(bones, n);
+			
+			if (b != null)
+				return b;
+		}
+		
+		return null;
+	}
+	
+	private static void logSkeleton(Bone root, int indent)
+	{
+		for (int i = 0; i < indent; i++)
+			System.out.print("| ");
+		System.out.println(root.getBoneName());
+		
+		indent++;
+		for (Bone b : root.getChildren())
+			logSkeleton(b, indent);
+	}
+	
+	private static void logBones(Bone[] bones)
+	{
+		for (Bone b : bones)
+			System.out.println("* " + b.getBoneName());
+	}
+	
+	private static void buildBoneHeirarchy(Bone[] bones, Bone bone, AINode node)
+	{
+		// TODO Add non-listed bones to bone hierarchy
+		
+		int childCount = node.mNumChildren();
+		
+		Bone[] children = new Bone[childCount];
+		bone.setChildren(children);
+		
+		for (int i = 0; i < childCount; i++)
+		{
+			AINode n = AINode.create(node.mChildren().get(i));
+			Bone b = findBone(bones, n.mName().dataString());
+			
+			if (b == null)
+			{
+				b = new Bone(n.mName().dataString(), assimpMatrix(n.mTransformation()).invert(),
+						assimpMatrix(n.mTransformation()), null);
+			}
+
+			children[i] = b;
+			buildBoneHeirarchy(bones, b, n);
+		}
+	}
+	
+	private static Bone findBone(Bone[] bones, String name)
+	{
+		for (int i = 0; i < bones.length; i++)
+			if (bones[i].getBoneName().equals(name))
+				return bones[i];
+		return null;
 	}
 	
 	private static Matrix4f findDefaultPose(AINode node, String boneName)

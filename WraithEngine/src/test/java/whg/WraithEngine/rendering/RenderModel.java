@@ -2,12 +2,8 @@ package whg.WraithEngine.rendering;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.FloatBuffer;
-
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
 import whg.WraithEngine.DefaultGameLoop;
@@ -22,7 +18,6 @@ import whg.WraithEngine.ModelLoader;
 import whg.WraithEngine.ModelScene;
 import whg.WraithEngine.QuitGameListener;
 import whg.WraithEngine.Shader;
-import whg.WraithEngine.Skeleton;
 import whg.WraithEngine.SkinnedMesh;
 import whg.WraithEngine.Universe;
 import whg.WraithEngine.VertexData;
@@ -71,6 +66,11 @@ public class RenderModel
 				Mesh floorMesh = buildMesh();
 				SkinnedMesh columnMesh = (SkinnedMesh)scene._meshes.get(0);
 
+				columnMesh.getSkeleton().getBones()[2].getLocalTransform().rotateLocalX((float) (Math.PI/2f));
+				columnMesh.getSkeleton().getBones()[3].getLocalTransform().rotateLocalX((float) (-Math.PI/2f));
+				columnMesh.getSkeleton().getBones()[4].getLocalTransform().rotateLocalX((float) (Math.PI/2f));
+				columnMesh.rebuildTransformBuffer();
+
 				Shader shader = buildShader();
 				shader.bind();
 				
@@ -82,48 +82,8 @@ public class RenderModel
 				
 				world.addEntity(floor);
 				world.addEntity(column);
-				
-				Skeleton skeleton = columnMesh.getSkeleton();
-				
-				FloatBuffer buf = BufferUtils.createFloatBuffer(16 * 128);
-				
-				Matrix4f parentTransform = new Matrix4f();
-				Matrix4f globalInverse = skeleton.getGlobalInverseTransform();
 
-				for (int i = 0; i < 128; i++)
-				{
-					Matrix4f transform;
-					if (i < skeleton.getBones().length)
-						transform = skeleton.getBones()[i].getDefaultPose();
-					else
-						transform = new Matrix4f();
-					
-					Matrix4f offset;
-					if (i < skeleton.getBones().length)
-						offset = skeleton.getBones()[i].getOffsetMatrix();
-					else
-						offset = new Matrix4f();
-					
-					if (i == 2)
-						transform.rotate(3.1415f / 2f, 1f, 0f, 0f);
-
-					Matrix4f globalTransform = new Matrix4f(parentTransform).mul(transform);
-
-					if (i == 10)
-					{
-						globalInverse.identity();
-						globalTransform.identity();
-					}
-					
-					Matrix4f boneMat = new Matrix4f();
-					boneMat.mul(globalInverse);
-					boneMat.mul(globalTransform);
-					boneMat.mul(offset);
-					boneMat.get(i * 16, buf);
-					
-					parentTransform = globalTransform;
-				}
-				shader.setUniformMat4Array("_bones", buf);
+				columnMesh.sendToShader(shader);
 			}
 		});
 		

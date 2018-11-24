@@ -6,15 +6,34 @@ public class Bone
 {
 	private String _boneName;
 	private Matrix4f _offset;
-	private Matrix4f _transform;
 	private Matrix4f _defaultPose;
+	private Bone[] _children;
+	private Matrix4f _localTransform;
+	private Matrix4f _globalTransform;
+	private Matrix4f _finalTransform;
 	
-	public Bone(String boneName, Matrix4f offset, Matrix4f defaultPose)
+	public Bone(String boneName, Matrix4f offset, Matrix4f defaultPose, Bone[] children)
 	{
 		_boneName = boneName;
 		_offset = offset;
 		_defaultPose = defaultPose;
-		_transform = new Matrix4f();
+		_children = children;
+
+		_localTransform = new Matrix4f();
+		_globalTransform = new Matrix4f();
+		_finalTransform = new Matrix4f();
+		
+		_localTransform.set(_defaultPose);
+	}
+	
+	public Bone[] getChildren()
+	{
+		return _children;
+	}
+	
+	public void setChildren(Bone[] children)
+	{
+		_children = children;
 	}
 	
 	public String getBoneName()
@@ -27,13 +46,23 @@ public class Bone
 		return _offset;
 	}
 	
-	public Matrix4f getTransform()
+	public Matrix4f getLocalTransform()
 	{
-		return _transform;
+		return _localTransform;
 	}
 	
 	public Matrix4f getDefaultPose()
 	{
 		return _defaultPose;
+	}
+	
+	public Matrix4f getFinalTransform()
+	{
+		return _finalTransform;
+	}
+	
+	public Matrix4f getGlobalTransform()
+	{
+		return _globalTransform;
 	}
 }
