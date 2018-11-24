@@ -25,9 +25,14 @@ public class Material
 		return _shader;
 	}
 	
+	public void bind()
+	{
+		_shader.bind();
+	}
+	
 	public void setMVPUniform(Camera camera, Location entityLocation)
 	{
-		// TODO Confirm that shader is currently bound.
+		_shader.bind();
 		
 		camera.getProjectionMatrix(_projectionMatrix);
 		camera.getViewMatrix(_viewMatrix);

@@ -26,126 +26,136 @@ public class ModelLoader
 				Assimp.aiProcess_LimitBoneWeights
 			);
 		
-		if (scene == null || scene.mNumMeshes() == 0)
-			return null;
+		ModelScene we_scene = new ModelScene();
+		if (scene == null)
+			return we_scene;
 		
-		AIMesh mesh = AIMesh.create(scene.mMeshes().get(0));
-		
-		int sizeOfVertexUnrigged = 6;
-		int sizeOfVertex = sizeOfVertexUnrigged + 8;
-		int vertexCount = mesh.mNumVertices();
-		float[] vertices = new float[vertexCount * sizeOfVertex];
-
-		int index = 0;
-		for (int v = 0; v < vertexCount; v++)
+		for (int sceneId = 0; sceneId < scene.mNumMeshes(); sceneId++)
 		{
-			// position
-			AIVector3D pos = mesh.mVertices().get(v);
-			vertices[index++] = pos.x();
-			vertices[index++] = pos.y();
-			vertices[index++] = pos.z();
+			AIMesh mesh = AIMesh.create(scene.mMeshes().get(sceneId));
+
+			int boneCount = mesh.mNumBones();
 			
-			// normal
-			AIVector3D normal = mesh.mNormals().get(v);
-			vertices[index++] = normal.x();
-			vertices[index++] = normal.y();
-			vertices[index++] = normal.z();
-			
-			// bone index
-			vertices[index++] = 0;
-			vertices[index++] = 0;
-			vertices[index++] = 0;
-			vertices[index++] = 0;
+			int sizeOfVertexUnrigged = 6;
+			int sizeOfVertex = sizeOfVertexUnrigged + (boneCount > 0 ? 8 : 0);
+			int vertexCount = mesh.mNumVertices();
+			float[] vertices = new float[vertexCount * sizeOfVertex];
 
-			// bone weight
-			vertices[index++] = 0;
-			vertices[index++] = 0;
-			vertices[index++] = 0;
-			vertices[index++] = 0;
-		}
-		
-		int triangleCount = mesh.mNumFaces();
-		short[] triangles = new short[triangleCount * 3];
-
-		// TODO If mesh has larger than 65k vertices, load as int array, not short array.
-		// Or break into multiple meshes.
-		index = 0;
-		for (int f = 0; f < triangleCount; f++)
-		{
-			AIFace face = mesh.mFaces().get(f);
-			triangles[index++] = (short)face.mIndices().get(0);
-			triangles[index++] = (short)face.mIndices().get(1);
-			triangles[index++] = (short)face.mIndices().get(2);
-		}
-		
-		HashMap<Integer,Integer> boneIndexMap = new HashMap<>();
-		Bone[] bones = new Bone[mesh.mNumBones()];
-		
-		int boneCount = mesh.mNumBones();
-		for (int b = 0; b < boneCount; b++)
-		{
-			AIBone bone = AIBone.create(mesh.mBones().get(b));
-
-			String boneName = bone.mName().dataString();
-			Matrix4f boneOffset = assimpMatrix(bone.mOffsetMatrix());
-			Matrix4f bonePose = findDefaultPose(scene.mRootNode(), boneName);
-
-			bones[b] = new Bone(boneName, boneOffset, bonePose, null);
-
-			for (int w = 0; w < bone.mNumWeights(); w++)
+			int index = 0;
+			for (int v = 0; v < vertexCount; v++)
 			{
-				AIVertexWeight weight = bone.mWeights().get(w);
-				int vertexIndex = weight.mVertexId();
-				int fIndex = vertexIndex * sizeOfVertex;
+				AIVector3D pos = mesh.mVertices().get(v);
+				vertices[index++] = pos.x();
+				vertices[index++] = pos.y();
+				vertices[index++] = pos.z();
 				
-				if (!boneIndexMap.containsKey(vertexIndex))
+				AIVector3D normal = mesh.mNormals().get(v);
+				vertices[index++] = normal.x();
+				vertices[index++] = normal.y();
+				vertices[index++] = normal.z();
+				
+				if (boneCount > 0)
 				{
-					vertices[(fIndex + sizeOfVertexUnrigged) + 0] = b;
-					vertices[(fIndex + sizeOfVertexUnrigged) + 2] = weight.mWeight();
-					boneIndexMap.put(vertexIndex, 1);
+					vertices[index++] = 0;
+					vertices[index++] = 0;
+					vertices[index++] = 0;
+					vertices[index++] = 0;
+					vertices[index++] = 0;
+					vertices[index++] = 0;
+					vertices[index++] = 0;
+					vertices[index++] = 0;
 				}
-				else if (boneIndexMap.get(vertexIndex) == 1)
+			}
+			
+			int triangleCount = mesh.mNumFaces();
+			short[] triangles = new short[triangleCount * 3];
+
+			// TODO If mesh has larger than 65k vertices, load as int array, not short array.
+			// Or break into multiple meshes.
+			index = 0;
+			for (int f = 0; f < triangleCount; f++)
+			{
+				AIFace face = mesh.mFaces().get(f);
+				triangles[index++] = (short)face.mIndices().get(0);
+				triangles[index++] = (short)face.mIndices().get(1);
+				triangles[index++] = (short)face.mIndices().get(2);
+			}
+			
+			if (boneCount > 0)
+			{
+				HashMap<Integer,Integer> boneIndexMap = new HashMap<>();
+				Bone[] bones = new Bone[mesh.mNumBones()];
+				
+				for (int b = 0; b < boneCount; b++)
 				{
-					vertices[(fIndex + sizeOfVertexUnrigged) + 1] = b;
-					vertices[(fIndex + sizeOfVertexUnrigged) + 3] = weight.mWeight();
-					boneIndexMap.put(vertexIndex, 2);
+					AIBone bone = AIBone.create(mesh.mBones().get(b));
+
+					String boneName = bone.mName().dataString();
+					Matrix4f boneOffset = assimpMatrix(bone.mOffsetMatrix());
+					Matrix4f bonePose = findDefaultPose(scene.mRootNode(), boneName);
+
+					bones[b] = new Bone(boneName, boneOffset, bonePose, null);
+
+					for (int w = 0; w < bone.mNumWeights(); w++)
+					{
+						AIVertexWeight weight = bone.mWeights().get(w);
+						int vertexIndex = weight.mVertexId();
+						int fIndex = vertexIndex * sizeOfVertex;
+						
+						if (!boneIndexMap.containsKey(vertexIndex))
+						{
+							vertices[(fIndex + sizeOfVertexUnrigged) + 0] = b;
+							vertices[(fIndex + sizeOfVertexUnrigged) + 2] = weight.mWeight();
+							boneIndexMap.put(vertexIndex, 1);
+						}
+						else if (boneIndexMap.get(vertexIndex) == 1)
+						{
+							vertices[(fIndex + sizeOfVertexUnrigged) + 1] = b;
+							vertices[(fIndex + sizeOfVertexUnrigged) + 3] = weight.mWeight();
+							boneIndexMap.put(vertexIndex, 2);
+						}
+						else if (boneIndexMap.get(vertexIndex) == 2)
+						{
+							vertices[(fIndex + sizeOfVertexUnrigged) + 4] = b;
+							vertices[(fIndex + sizeOfVertexUnrigged) + 6] = weight.mWeight();
+							boneIndexMap.put(vertexIndex, 3);
+						}
+						else if (boneIndexMap.get(vertexIndex) == 3)
+						{
+							vertices[(fIndex + sizeOfVertexUnrigged) + 5] = b;
+							vertices[(fIndex + sizeOfVertexUnrigged) + 7] = weight.mWeight();
+							boneIndexMap.put(vertexIndex, 4);
+						}
+						// TODO If a vertex has more than 4 bone parents, only use highest 4.
+						// Currently it is ignored
+					}
 				}
-				else if (boneIndexMap.get(vertexIndex) == 2)
-				{
-					vertices[(fIndex + sizeOfVertexUnrigged) + 4] = b;
-					vertices[(fIndex + sizeOfVertexUnrigged) + 6] = weight.mWeight();
-					boneIndexMap.put(vertexIndex, 3);
-				}
-				else if (boneIndexMap.get(vertexIndex) == 3)
-				{
-					vertices[(fIndex + sizeOfVertexUnrigged) + 5] = b;
-					vertices[(fIndex + sizeOfVertexUnrigged) + 7] = weight.mWeight();
-					boneIndexMap.put(vertexIndex, 4);
-				}
-				// TODO If a vertex has more than 4 bone parents, only use highest 4.
-				// Currently it is ignored
+				
+				Bone rootBone = findRootBone(bones, scene.mRootNode());
+
+				AIMatrix4x4 inverseRootTransformRaw = scene.mRootNode().mTransformation();
+				Matrix4f inverseRootTransform = assimpMatrix(inverseRootTransformRaw);
+
+				Skeleton skeleton = new Skeleton(inverseRootTransform, bones, rootBone);
+				
+				int[] attributes = new int[] {3, 3, 4, 4};
+				VertexData vertexData = new VertexData(vertices, triangles, attributes);
+				SkinnedMesh we_mesh = new SkinnedMesh(mesh.mName().dataString(), vertexData, skeleton);
+
+				we_scene._meshes.add(we_mesh);
+			}
+			else
+			{
+				int[] attributes = new int[] {3, 3};
+				VertexData vertexData = new VertexData(vertices, triangles, attributes);
+				Mesh we_mesh = new Mesh(mesh.mName().dataString(), vertexData);
+
+				we_scene._meshes.add(we_mesh);
 			}
 		}
 		
-		Bone rootBone = findRootBone(bones, scene.mRootNode());
-
-		AIMatrix4x4 inverseRootTransformRaw = scene.mRootNode().mTransformation();
-		Matrix4f inverseRootTransform = assimpMatrix(inverseRootTransformRaw);
-
-		Skeleton skeleton = new Skeleton(inverseRootTransform, bones, rootBone);
-		
-		int[] attributes = new int[] {3, 3, 4, 4};
-		VertexData vertexData = new VertexData(vertices, triangles, attributes);
-		SkinnedMesh we_mesh = new SkinnedMesh(vertexData, skeleton);
-		
 		scene.free();
 		
-		System.out.println("Skeleton:");
-		logSkeleton(rootBone, 0);
-		logBones(bones);
-		
-		ModelScene we_scene = new ModelScene();
-		we_scene._meshes.add(we_mesh);
 		return we_scene;
 	}
 	
@@ -169,23 +179,6 @@ public class ModelLoader
 		}
 		
 		return null;
-	}
-	
-	private static void logSkeleton(Bone root, int indent)
-	{
-		for (int i = 0; i < indent; i++)
-			System.out.print("| ");
-		System.out.println(root.getBoneName());
-		
-		indent++;
-		for (Bone b : root.getChildren())
-			logSkeleton(b, indent);
-	}
-	
-	private static void logBones(Bone[] bones)
-	{
-		for (Bone b : bones)
-			System.out.println("* " + b.getBoneName());
 	}
 	
 	private static void buildBoneHeirarchy(Bone[] bones, Bone bone, AINode node)

@@ -31,6 +31,7 @@ public class Model implements Entity, Renderable
 	@Override
 	public void render(Camera camera)
 	{
+		_material.bind();
 		_material.setMVPUniform(camera, _location);
 		_mesh.render();
 	}

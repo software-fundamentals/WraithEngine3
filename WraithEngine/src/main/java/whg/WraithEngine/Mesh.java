@@ -16,9 +16,12 @@ public class Mesh implements DisposableResource
 	private int _indexId;
 	private int _indexCount;
 	private boolean _disposed;
+	private String _meshName;
 
-	public Mesh(VertexData vertexData)
+	public Mesh(String meshName, VertexData vertexData)
 	{
+		_meshName = meshName;
+
 		FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexData.getDataArray().length);
 		vertexBuffer.put(vertexData.getDataArray());
 		vertexBuffer.flip();
@@ -89,5 +92,10 @@ public class Mesh implements DisposableResource
 	public boolean isDisposed()
 	{
 		return _disposed;
+	}
+	
+	public String getMeshName()
+	{
+		return _meshName;
 	}
 }

@@ -9,9 +9,9 @@ public class SkinnedMesh extends Mesh
 	private Skeleton _skeleton;
 	private FloatBuffer _boneTransformBuffer;
 
-	public SkinnedMesh(VertexData vertexData, Skeleton skeleton)
+	public SkinnedMesh(String meshName, VertexData vertexData, Skeleton skeleton)
 	{
-		super(vertexData);
+		super(meshName, vertexData);
 		
 		_skeleton = skeleton;
 		_boneTransformBuffer = BufferUtils.createFloatBuffer(Skeleton.MAX_BONES * 16);
