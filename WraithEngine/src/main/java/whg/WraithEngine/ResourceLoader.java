@@ -1,5 +1,6 @@
 package whg.WraithEngine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ResourceLoader
@@ -25,5 +26,24 @@ public class ResourceLoader
 				res.dispose();
 		}
 		_resources.clear();
+	}
+
+	public static Shader loadShader(String name)
+	{
+		String vert, frag;
+		try
+		{
+			vert = FileUtils.loadFileAsString(FileUtils.getResource(name + ".vert"));
+			frag = FileUtils.loadFileAsString(FileUtils.getResource(name + ".frag"));
+		}
+		catch(IOException exception)
+		{
+			System.err.println("Failed to load shader!");
+			// TODO Return default shader
+			return null;
+		}
+		
+		Shader shader = new Shader(name, vert, frag);
+		return shader;
 	}
 }

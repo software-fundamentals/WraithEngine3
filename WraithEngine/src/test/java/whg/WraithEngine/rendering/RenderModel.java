@@ -1,14 +1,11 @@
 package whg.WraithEngine.rendering;
 
 import java.io.File;
-import java.io.IOException;
-
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
 import whg.WraithEngine.DefaultGameLoop;
-import whg.WraithEngine.FileUtils;
 import whg.WraithEngine.Model;
 import whg.WraithEngine.FirstPersonCamera;
 import whg.WraithEngine.InitalizerEntity;
@@ -18,6 +15,7 @@ import whg.WraithEngine.Mesh;
 import whg.WraithEngine.ModelLoader;
 import whg.WraithEngine.ModelScene;
 import whg.WraithEngine.QuitGameListener;
+import whg.WraithEngine.ResourceLoader;
 import whg.WraithEngine.Shader;
 import whg.WraithEngine.SkinnedMesh;
 import whg.WraithEngine.SkinnedModel;
@@ -67,9 +65,13 @@ public class RenderModel
 				SkinnedMesh monkey = (SkinnedMesh) scene._meshes.get(0);
 				Mesh floor = scene._meshes.get(1);
 				
-				Shader baseShader = buildShader("shader");
-				Shader boneShader = buildShader("shader_bone");
+				Shader baseShader = ResourceLoader.loadShader("shader");
+				Shader boneShader = ResourceLoader.loadShader("shader_bone");
 				
+				baseShader.loadUniform("_mvpMat");
+				boneShader.loadUniform("_mvpMat");
+				boneShader.loadUniform("_bones");
+
 				Material baseMaterial = new Material(baseShader);
 				Material boneMaterial = new Material(boneShader);
 
@@ -92,26 +94,5 @@ public class RenderModel
 		window.loop();
 		
 		windowManager.dispose();
-	}
-
-	private static Shader buildShader(String name)
-	{
-		String vert, frag;
-		try
-		{
-			vert = FileUtils.loadFileAsString(FileUtils.getResource(name + ".vert"));
-			frag = FileUtils.loadFileAsString(FileUtils.getResource(name + ".frag"));
-		}
-		catch(IOException exception)
-		{
-			System.err.println("Failed to load shader!");
-			// TODO Return default shader
-			return null;
-		}
-		
-		Shader shader = new Shader(vert, frag);
-		shader.loadUniform("_mvpMat");
-		shader.loadUniform("_bones");
-		return shader;
 	}
  }
