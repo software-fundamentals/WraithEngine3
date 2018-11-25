@@ -1,14 +1,26 @@
 package whg.WraithEngine;
 
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-public class Shader
+public class Shader implements DisposableResource
 {
-	private int _shaderId;
+	// ===== FIELDS =====
 
-	public Shader(String vert, String frag)
+	private int _shaderId;
+	private HashMap<String,Integer> _uniforms;
+	private boolean _disposed;
+	private String _name;
+
+	public Shader(String name, String vert, String frag)
 	{
+		_name = name;
+
+		_uniforms = new HashMap<>();
+		
 		int vId = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
 		int fId = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
 		
@@ -43,20 +55,94 @@ public class Shader
 		
 		GL20.glDeleteShader(vId);
 		GL20.glDeleteShader(fId);
+		
+		ResourceLoader.addResource(this);
+		ShaderDatabase.loadShader(this);
+	}
+
+	// ===== PRIVATE ONLY =====
+	
+	private int getUniformLocation(String name)
+	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
+		if (_uniforms.containsKey(name))
+			return _uniforms.get(name);
+		loadUniform(name);
+		return _uniforms.get(name);
 	}
 	
-	public void bind()
+	// ===== ENGINE ONLY =====
+
+	void bind()
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		GL20.glUseProgram(_shaderId);
 	}
 	
-	public void unbind()
+	void unbind()
 	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
 		GL20.glUseProgram(0);
+	}
+	
+
+	// ===== PUBLIC API =====
+	
+	public String getName()
+	{
+		return _name;
+	}
+	
+	public void loadUniform(String name)
+	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
+		int location = GL20.glGetUniformLocation(_shaderId, name);
+		_uniforms.put(name, location);
 	}
 	
 	public void dispose()
 	{
+		if (_disposed)
+			return;
+
+		_disposed = true;
+		ResourceLoader.removeResource(this);
+		ShaderDatabase.unloadShader(this);
 		GL20.glDeleteProgram(_shaderId);
+		
+		if (ShaderDatabase.isShaderBound(this))
+			ShaderDatabase.bindShader(null);
+	}
+		
+	public void setUniformMat4(String name, FloatBuffer mat)
+	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
+		int location = getUniformLocation(name);
+		GL20.glUniformMatrix4fv(location, false, mat);
+	}
+	
+	public void setUniformMat4Array(String name, FloatBuffer mat)
+	{
+		if (_disposed)
+			throw new IllegalStateException("Shader already disposed!");
+
+		int location = getUniformLocation(name);
+		GL20.glUniformMatrix4fv(location, false, mat);
+	}
+
+	@Override
+	public boolean isDisposed()
+	{
+		return _disposed;
 	}
 }

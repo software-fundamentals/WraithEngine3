@@ -19,11 +19,13 @@ public class Window
 	private boolean _destroyed;
 	private Object _lock = new Object();
 	private GLFWEventQueue _eventQueue;
+	private MouseMoveEvent _mouseMoveEvent;
 	
 	public Window()
 	{
 		_windowId = MemoryUtil.NULL;
 		_eventQueue = new GLFWEventQueue();
+		_mouseMoveEvent = new MouseMoveEvent(this);
 	}
 	
 	public void setWindowName(String windowName)
@@ -94,6 +96,13 @@ public class Window
 		_destroyed = false;
 		
 		_eventQueue.clearEvents();
+		_mouseMoveEvent.setMousePos(0f, 0f);
+		
+		// TODO Remove
+		{
+			GLFW.glfwSetInputMode(_windowId, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+		}
+
 		Thread t = new Thread(() -> {
 			GLFW.glfwMakeContextCurrent(_windowId);
 
@@ -109,27 +118,43 @@ public class Window
 		t.start();
 		
 		while (!GLFW.glfwWindowShouldClose(_windowId))
+		{
 			GLFW.glfwWaitEvents();
-		_destroyed = true;
+			synchronized (_lock)
+			{
+				if (_destroyed)
+					GLFW.glfwSetWindowShouldClose(_windowId, true);
+			}
+		}
+		requestClose();
+
 		_eventQueue.clearEvents();
 	}
 	
 	public boolean isRequestingClose()
 	{
-		return _destroyed;
+		synchronized(_lock)
+		{
+			return _destroyed;
+		}
 	}
 	
 	public void requestClose()
 	{
 		synchronized (_lock)
 		{
-			GLFW.glfwSetWindowShouldClose(_windowId, true);
+			_destroyed = true;
 		}
 	}
 	
 	public void pollEvents()
 	{
 		_eventQueue.handleEvents();
+
+		synchronized (_mouseMoveEvent)
+		{
+			_mouseMoveEvent.handleEvent();
+		}
 	}
 	
 	public void endFrame()
@@ -176,6 +201,17 @@ public class Window
 	{
 		GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) -> {
 			_eventQueue.addEvent(new WindowResizeEvent(this, width, height));
+		});
+
+		GLFW.glfwSetKeyCallback(_windowId, (long window, int key, int scancode, int action, int mods) -> {
+			_eventQueue.addEvent(new KeyPressedEvent(this, key, action, mods));
+		});
+
+		GLFW.glfwSetCursorPosCallback(_windowId, (long window, double mouseX, double mouseY) -> {
+			synchronized (_mouseMoveEvent)
+			{
+				_mouseMoveEvent.setMousePos((float)mouseX, (float)mouseY);
+			}
 		});
 	}
 	
