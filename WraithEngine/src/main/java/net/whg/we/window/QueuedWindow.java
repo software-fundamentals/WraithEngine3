@@ -80,6 +80,10 @@ public class QueuedWindow
 		return _window;
 	}
 
+	/**
+	 * buildWindow adds the Window function buildWindow
+	 * to the list of requests.
+	 */
 	void buildWindow()
 	{
 		addRequest(() ->
@@ -88,6 +92,11 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setCursorEnabled adds the Window function setCursorEnabled
+	 * to the list of requests.
+	 * @param cursorEnabled the boolean to sent as parameter to the function.
+	 */
 	public void setCursorEnabled(boolean cursorEnabled)
 	{
 		addRequest(() ->
@@ -97,8 +106,8 @@ public class QueuedWindow
 	}
 
 	/**
-	 * setCursorEnabledInstant assigns true or false to the
-	 *  _cursorEnabled variable.
+	 * setCursorEnabledInstant sets the cursorEnabled value instead of putting
+	 * it in the request queue.
 	 * @param cursorEnabled boolean that should be assigned to _cursorEnabled.
 	 */
 	void setCursorEnabledInstant(boolean cursorEnabled)
@@ -194,6 +203,10 @@ public class QueuedWindow
 		return _height;
 	}
 
+	/**
+	 * setName adds the Window function setName to the list of requests.
+	 * @param name the String to be sent as parameter to the function.
+	 */
 	public void setName(String name)
 	{
 		addRequest(() ->
@@ -202,11 +215,20 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setNameInstant sets the name instead of putting it into the request queue.
+	 * @param name the String with the new name.
+	 */
 	void setNameInstant(String name)
 	{
 		_name = name;
 	}
 
+	/**
+	 * setResizable adds the Window function setResizable to the list
+	 * of requests.
+	 * @param resizable the boolean to be sent as parameter to the function.
+	 */
 	public void setResizable(boolean resizable)
 	{
 		addRequest(() ->
@@ -215,11 +237,21 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setResizableInstant sets the resizable value instead of putting
+	 * it into the request queue.
+	 * @param resizable the boolean with the new resizable value.
+	 */
 	void setResizableInstant(boolean resizable)
 	{
 		_isResizable = resizable;
 	}
 
+	/**
+	 * setVSync adds the Window function setVSync to the the list
+	 * of requests.
+	 * @param vSync the boolean to be sent as parameter to the function.
+	 */
 	public void setVSync(boolean vSync)
 	{
 		addRequest(() ->
@@ -228,11 +260,22 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setVSyncInstant sets the vSync value instead of putting
+	 * it into the request queue.
+	 * @param vSync the boolean with the new vSync value.
+	 */
 	void setVSyncInstant(boolean vSync)
 	{
 		_vSync = vSync;
 	}
 
+	/**
+	 * setSize adds the Window function setSize to the list
+	 * of requests.
+	 * @param width  the width to be sent as parameter to the function.
+	 * @param height the height to be sent as parameter to the function.
+	 */
 	public void setSize(int width, int height)
 	{
 		addRequest(() ->
@@ -241,6 +284,13 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setSizeInstant sets the height and width of the window
+	 * instead of putting it into the request queue and notifies
+	 * the WindowListener of this event.
+	 * @param width  the int with the new width.
+	 * @param height the int with the new height.
+	 */
 	void setSizeInstant(int width, int height)
 	{
 		_width = width;
@@ -250,18 +300,34 @@ public class QueuedWindow
 			_listener.onWindowResized(width, height);
 	}
 
+	/**
+	 * onKey notifies the WindowListener of an onKey event.
+	 * @param key   the affected key.
+	 * @param state which state the key is in
+	 * @param mods  possible modification key.
+	 */
 	void onKey(int key, KeyState state, int mods)
 	{
 		if (_listener != null)
 			_listener.onKey(key, state, mods);
 	}
 
+	/**
+	 * onType notifies the WindowListener of an onType event.
+	 * @param key  the key that was pressed.
+	 * @param mods possible modification key.
+	 */
 	void onType(int key, int mods)
 	{
 		if (_listener != null)
 			_listener.onType(key, mods);
 	}
 
+	/**
+	 * onMouseMove notifies the WindowListener of an onMouseMoved event.
+	 * @param mouseX the X-value of the mouse.
+	 * @param mouseY the Y-value of the mouse.
+	 */
 	void onMouseMove(float mouseX, float mouseY)
 	{
 		if (_listener != null)
@@ -291,6 +357,10 @@ public class QueuedWindow
 		return false;
 	}
 
+	/**
+	 * blockUntilRequestsFinish lets the Thread wait
+	 * until the list of requests is empty.
+	 */
 	private void blockUntilRequestsFinish()
 	{
 		while (true)
@@ -311,6 +381,12 @@ public class QueuedWindow
 		}
 	}
 
+	/**
+	 * initGraphics wait until there are no request
+	 * and then initializes the Window graphics by calling
+	 * the initGraphics function.
+	 * @param graphics the Graphics that should be initialized.
+	 */
 	void initGraphics(Graphics graphics)
 	{
 		blockUntilRequestsFinish();
