@@ -89,6 +89,16 @@ To change from tight to loose coupling between the classes, we decided to make t
 #### Related Issue
 See [#16](https://github.com/software-fundamentals/WraithEngine3/issues/16).
 
+### 4: Communcation between main- and window thread
+#### Description
+It's imporant to keep the main- and window thread separate and have a way of communicating in a synchronized manner between them. The main thread handles the game loop and processes the current window state. The window is managed in a separate thread to avoid blocking the main thread during certain events.
+
+#### Refactoring
+The communication between the threads is done by three main components: WindowManager (previously QueuedWindow), Window and WindowListener. The WindowManager is the one synchronizing the two threads by communicating with the Window (window thread) and WindowListener (main thread). The refactoring done here was changing the name of QueuedWindow to WindowManager to make it more descriptive and change so that both the Window and Listener are sent as parameters to the WindowManager when it is created. Previously the Window was sent as a parameter and the Listener initialized inside of the WindowManager but in order to make the WindowManager easier to initialize we changed to the current structure and also created a WindowListener enum to make it easier to add mulitple WindowListener types.
+
+#### Related Issue
+See [#8](https://github.com/software-fundamentals/WraithEngine3/issues/8).
+
 ## Existing test cases relating to refactored code
 
 ## The refactoring carried out
