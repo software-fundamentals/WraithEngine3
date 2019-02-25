@@ -59,57 +59,57 @@ The refactoring itself is documented by the git log.
 
 For each team member, how much time was spent in
 
-1. plenary discussions/meetings;
-  All group members - 7 hours?
+1. plenary discussions/meetings
+  * All group members - 7 hours
 
-2. discussions within parts of the group;
-  William -  2 hours
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin -
+2. discussions within parts of the group
+  * William -  2 hours
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 3 hours
 
-3. reading documentation;
+3. reading documentation
+  * William - 30 min
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 30 min
+
+4. configuration
+  * William - 1 hour 30 min
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 1 hour
+
+5. analyzing code/output
+  * William - 11 hours
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 6 hours
+
+6. writing documentation
+  * William - 3 hours
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 6 hours
+
+7. writing code
+  * William - 6 hours
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 3 hours
+
+8. running code
   William - 30 min
   Miguel -
   Sebastian -
   Moa -
-  Josefin -
-
-4. configuration;
-  William - 1 hour 30 min
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin -
-
-5. analyzing code/output;
-  William - 11 hours
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin -
-
-6. writing documentation;
-  William - 3 hours
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin -
-
-7. writing code;
-  William - 6 hours
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin -
-
-8. running code?
-  William - 30 min
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin -
+  Josefin - 30 min
 
 ## Overall experience
 
