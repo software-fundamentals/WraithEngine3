@@ -10,7 +10,7 @@ import net.whg.we.rendering.Graphics;
 import net.whg.we.utils.logging.Log;
 
 /**
- * The GLFWWindow class implements the Window interace and
+ * The GLFWWindow class implements the Window interface and
  * ties with GLFW, a C++ library for handling window management.
  */
 public class GLFWWindow implements Window
@@ -319,7 +319,7 @@ public class GLFWWindow implements Window
 	 * the calling thread. If _vSync is true, there has to be one
 	 * screen update before swapping buffers, otherwise no updates
 	 * are required.
-	 * @param graphics [description]
+	 * @param graphics the Graphics that should be initialized.
 	 */
 	@Override
 	public void initGraphics(Graphics graphics)
