@@ -4,6 +4,7 @@ import net.whg.we.utils.DefaultWindowListener;
 import net.whg.we.utils.Screen;
 import net.whg.we.window.QueuedWindow;
 import net.whg.we.window.WindowBuilder;
+import net.whg.we.window.WindowEngine;
 
 /**
  * The GraphicsPipeline class initializes a window with associated
@@ -22,7 +23,7 @@ public class GraphicsPipeline
 	public GraphicsPipeline()
 	{
 		_graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
-		_window = new WindowBuilder(WindowBuilder.WINDOW_ENGINE_GLFW).setName("WraithEngine")
+		_window = new WindowBuilder(WindowEngine.GLFW).setName("WraithEngine")
 				.setResizable(false).setSize(800, 600).setVSync(false)
 				.setListener(new DefaultWindowListener()).setGraphicsEngine(_graphics).build();
 		_graphics.init();

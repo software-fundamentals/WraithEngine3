@@ -11,8 +11,6 @@ import net.whg.we.rendering.Graphics;
  */
 public class WindowBuilder
 {
-	public static final int WINDOW_ENGINE_GLFW = 0;
-
 	private QueuedWindow _window;
 	private boolean _built;
 	private Graphics _graphics;
@@ -23,13 +21,13 @@ public class WindowBuilder
 	 * for that window as well as a Thread for the QueuedWindow.
 	 * @param  engine The type of window that should be initialized.
 	 */
-	public WindowBuilder(int engine)
+	public WindowBuilder(WindowEngine engine)
 	{
 		Window window;
 
 		switch (engine)
 		{
-			case WINDOW_ENGINE_GLFW:
+			case GLFW:
 				window = new GLFWWindow();
 				break;
 			default:
