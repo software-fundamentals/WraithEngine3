@@ -85,10 +85,10 @@ public class GLFWWindow extends AbstractDesktopWindow
 				Log.trace("Creating window size callback.");
 				GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) ->
 				{
-					if (window() != null)
-						window().addEvent(() ->
+					if (windowManager() != null)
+						windowManager().addEvent(() ->
 						{
-							window().setSizeInstant(width(), height());
+							windowManager().setSizeInstant(width(), height());
 						});
 				});
 
@@ -105,10 +105,10 @@ public class GLFWWindow extends AbstractDesktopWindow
 							else
 								state = KeyState.REPEATED;
 
-							if (window() != null)
-								window().addEvent(() ->
+							if (windowManager() != null)
+								windowManager().addEvent(() ->
 								{
-									window().onKey(key, state, mods);
+									windowManager().onKey(key, state, mods);
 								});
 						});
 
@@ -123,10 +123,10 @@ public class GLFWWindow extends AbstractDesktopWindow
 				Log.trace("Creating text input callback.");
 				GLFW.glfwSetCharModsCallback(_windowId, (long window, int key, int mods) ->
 				{
-					if (window() != null)
-						window().addEvent(() ->
+					if (windowManager() != null)
+						windowManager().addEvent(() ->
 						{
-							window().onType(key, mods);
+							windowManager().onType(key, mods);
 						});
 				});
 
@@ -182,7 +182,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 
 	/**
 	 * requestClose makes a request to close the window and
-	 * adds the setSizeInstant function to the QueuedWindow
+	 * adds the setSizeInstant function to the WindowManager
 	 * event queue .
 	 */
 	@Override
@@ -194,10 +194,10 @@ public class GLFWWindow extends AbstractDesktopWindow
 			GLFW.glfwSetWindowShouldClose(_windowId, true);
 		}
 
-		if (window() != null)
-			window().addEvent(() ->
+		if (windowManager() != null)
+			windowManager().addEvent(() ->
 			{
-				window().setSizeInstant(width(), height());
+				windowManager().setSizeInstant(width(), height());
 			});
 	}
 
@@ -209,8 +209,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 	@Override
 	public boolean endFrame()
 	{
-		if (window() != null)
-			window().onMouseMove(_mouseX, _mouseY);
+		if (windowManager() != null)
+			windowManager().onMouseMove(_mouseX, _mouseY);
 
 		synchronized (_lock)
 		{

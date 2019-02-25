@@ -9,15 +9,15 @@ import net.whg.we.rendering.Graphics;
 interface Window
 {
 	/**
-	 * setQueuedWindow sets the QueuedWindow that should manage this windows'
+	 * setWindowManager sets the WindowManager that should manage this windows'
 	 * communication with the main thread.
-	 * @param window the QueuedWindow.
+	 * @param window the WindowManager.
 	 */
-	void setQueuedWindow(QueuedWindow window);
+	void setWindowManager(WindowManager windowManager);
 
 	/**
 	 * setName changes the name of the window and adds the setNameInstant
-	 * function to the QueuedWindow event queue. If the window
+	 * function to the WindowManager event queue. If the window
 	 * is open, the function returns.
 	 * @param name String with the new name.
 	 */
@@ -25,7 +25,7 @@ interface Window
 
 	/**
 	 * setResizable changes the resizable state and adds the setReziableInstant
-	 * function to the QueuedWindow event queue.  If the window is open,
+	 * function to the WindowManager event queue.  If the window is open,
 	 * the function returns.
 	 * @param resizable boolean with the new resizable value.
 	 */
@@ -33,7 +33,7 @@ interface Window
 
 	/**
 	 * setVSync changes the vSync state and adds the setVSyncInstant
-	 * function to the QueuedWindow event queue. If the window is open,
+	 * function to the WindowManager event queue. If the window is open,
 	 * the function returns.
 	 * @param vSync boolean with the new vSync value.
 	 */
@@ -41,7 +41,7 @@ interface Window
 
 	/**
 	 * setSize changes the width and height and adds the
-	 * setSizeInstant function to the QueuedWindow event queue. If the
+	 * setSizeInstant function to the WindowManager event queue. If the
 	 * window is open, the function returns.
 	 * @param width  int with the new width.
 	 * @param height int with the new height.

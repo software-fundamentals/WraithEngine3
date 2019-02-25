@@ -9,7 +9,7 @@ public abstract class AbstractDesktopWindow implements Window {
 	private boolean _vSync;
 	private int _width;
 	private int _height;
-	private QueuedWindow _window;
+	private WindowManager _windowManager;
 
 	protected AbstractDesktopWindow(String name, boolean resizable, boolean vSync,
 			int width, int height) {
@@ -39,10 +39,10 @@ public abstract class AbstractDesktopWindow implements Window {
 		_name = name;
 		Log.infof("Changed window title to %s.", name);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setNameInstant(_name);
+				_windowManager.setNameInstant(_name);
 			});
 	}
 
@@ -58,10 +58,10 @@ public abstract class AbstractDesktopWindow implements Window {
 		_resizable = resizable;
 		Log.infof("Changed window resizable to %s.", resizable);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setResizableInstant(_resizable);
+				_windowManager.setResizableInstant(_resizable);
 			});
 	}
 
@@ -77,10 +77,10 @@ public abstract class AbstractDesktopWindow implements Window {
 		_vSync = vSync;
 		Log.infof("Changed window VSync to %s.", vSync);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setVSyncInstant(_vSync);
+				_windowManager.setVSyncInstant(_vSync);
 			});
 	}
 
@@ -97,10 +97,10 @@ public abstract class AbstractDesktopWindow implements Window {
 		_height = height;
 		Log.infof("Changed window size to %dx%d.", width, height);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setSizeInstant(_width, _height);
+				_windowManager.setSizeInstant(_width, _height);
 			});
 	}
 
@@ -108,9 +108,9 @@ public abstract class AbstractDesktopWindow implements Window {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setQueuedWindow(QueuedWindow window)
+	public void setWindowManager(WindowManager windowManager)
 	{
-		_window = window;
+		_windowManager = windowManager;
 	}
 
 	protected String name() {
@@ -133,7 +133,7 @@ public abstract class AbstractDesktopWindow implements Window {
 		return _height;
 	}
 
-	protected QueuedWindow window() {
-		return _window;
+	protected WindowManager windowManager() {
+		return _windowManager;
 	}
 }
