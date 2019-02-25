@@ -20,6 +20,10 @@ public class GLFWWindow extends AbstractDesktopWindow
 	private float _mouseX;
 	private float _mouseY;
 
+	public GLFWWindow() {
+		super("WraithEngine Project", false, false, 640, 480);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

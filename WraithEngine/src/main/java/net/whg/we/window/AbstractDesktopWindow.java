@@ -5,11 +5,20 @@ import net.whg.we.utils.logging.Log;
 public abstract class AbstractDesktopWindow implements Window {
 	
 	private String _name;
-	private boolean _resizable = false;
-	private boolean _vSync = false;
-	private int _width = 640;
-	private int _height = 480;
+	private boolean _resizable;
+	private boolean _vSync;
+	private int _width;
+	private int _height;
 	private QueuedWindow _window;
+
+	protected AbstractDesktopWindow(String name, boolean resizable, boolean vSync,
+			int width, int height) {
+		_name = name;
+		_resizable = resizable;
+		_vSync = vSync;
+		_width = width;
+		_height = height;
+	}
 
 	/**
 	 * isWindowOpen checks if the window is open by checking
