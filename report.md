@@ -79,6 +79,16 @@ All functions and classes in the package `whg.net.we.window` were documented in 
 #### Related Issue
 See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
 
+### 3: Remove tight coupling between `WindowManager` and `Window`
+#### Description
+There was a large dependency between the WindowManager (previously QueuedWindow) and Window where both had each other as variable. From an Object Oriented point of view it's better to have loose coupling.
+
+#### Refactoring
+To change from tight to loose coupling between the classes, we decided to make the Window interface unaware of WindowManager. Now, when a variable is to be updated in the Window, the WindowManager calls the relevant function in Window which returns a boolean wheter it was able to update or not. If the return value was true, the WindowManager will update its corresponding variable as well by putting the variable's update function in the event queue.
+
+#### Related Issue
+See [#16](https://github.com/software-fundamentals/WraithEngine3/issues/16).
+
 ## Existing test cases relating to refactored code
 
 ## The refactoring carried out
