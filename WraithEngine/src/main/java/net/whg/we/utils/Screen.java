@@ -1,7 +1,7 @@
 package net.whg.we.utils;
 
 import net.whg.we.utils.logging.Log;
-import net.whg.we.window.QueuedWindow;
+import net.whg.we.window.WindowManager;
 
 /**
  * A utility class for talking to the screen.
@@ -13,7 +13,7 @@ public class Screen
 	private static int _width = 640;
 	private static int _height = 480;
 	private static boolean _mouseLocked;
-	private static QueuedWindow _window;
+	private static WindowManager _windowManager;
 
 	/**
 	 * Sets the window to forward update events to, such as
@@ -22,11 +22,11 @@ public class Screen
 	 *
 	 * @param window
 	 */
-	public static void setWindow(QueuedWindow window)
+	public static void setWindow(WindowManager windowManager)
 	{
-		_window = window;
+		_windowManager = windowManager;
 
-		window.setCursorEnabled(!_mouseLocked);
+		windowManager.setCursorEnabled(!_mouseLocked);
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class Screen
 	{
 		Log.tracef("Set cursor locked to %s.", mouseLocked);
 
-		if (_window != null)
-			_window.setCursorEnabled(!mouseLocked);
+		if (_windowManager != null)
+			_windowManager.setCursorEnabled(!mouseLocked);
 		_mouseLocked = mouseLocked;
 	}
 

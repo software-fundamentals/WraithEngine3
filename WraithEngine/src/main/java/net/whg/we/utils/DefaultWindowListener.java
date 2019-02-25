@@ -6,7 +6,7 @@ import net.whg.we.window.WindowListener;
 
 /**
  * The DefaultWindowListener class implements the WindowListener interface
- * and listens for events being sent from QueuedWindow.
+ * and listens for events being sent from WindowManager.
  */
 public class DefaultWindowListener implements WindowListener
 {

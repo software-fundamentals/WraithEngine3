@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import net.whg.we.rendering.Graphics;
 
 /**
- * The QueuedWindow class is responsible for handling the synchronized
+ * The WindowManager class is responsible for handling the synchronized
  * communication between the main thread and the window thread by making use
  * of thread-safe message queues.
  */
-public class QueuedWindow
+public class WindowManager
 {
 	private Window _window;
 	private LinkedList<WindowRequest> _requests = new LinkedList<>();
@@ -25,20 +25,20 @@ public class QueuedWindow
 
 	/**
 	 * WindowBuilder takes an engine type as argument and if valid,
-	 * initializes that window. Then a QueuedWindow is initialized
-	 * for that window as well as a Thread for the QueuedWindow.
+	 * initializes that window. Then a WindowManager is initialized
+	 * for that window as well as a Thread for the WindowManager.
 	 * @param  engine The type of window that should be initialized.
 	 */
 
 	/**
-	 * QueuedWindow takes a Window as argument, sets it to the current
-	 * window and assigns itself as its QueuedWindow.
-	 * @param  window The Window that the QueuedWindow should communicate with.
+	 * WindowManager takes a Window as argument, sets it to the current
+	 * window and assigns itself as its WindowManager.
+	 * @param  window The Window that the WindowManager should communicate with.
 	 */
-	QueuedWindow(Window window)
+	WindowManager(Window window)
 	{
 		_window = window;
-		_window.setQueuedWindow(this);
+		_window.setWindowManager(this);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class QueuedWindow
 	}
 
 	/**
-	 * setWindowListener assigns a WindowListener to the QueuedWindow.
+	 * setWindowListener assigns a WindowListener to the WindowManager.
 	 * @param  listener The WindowListener that should be assigned.
 	 */
 	public void setWindowListener(WindowListener listener)
@@ -160,7 +160,7 @@ public class QueuedWindow
 
 	/**
 	 * getName returns the value of _name.
-	 * @return the name of the QueuedWindow.
+	 * @return the name of the WindowManager.
 	 */
 	public String getName()
 	{
@@ -169,7 +169,7 @@ public class QueuedWindow
 
 	/**
 	 * isResizable returns the value of _isResizable.
-	 * @return true if _isResizableis true, false otherwise.
+	 * @return true if _isResizable is true, false otherwise.
 	 */
 	public boolean isResizable()
 	{
@@ -186,8 +186,8 @@ public class QueuedWindow
 	}
 
 	/**
-	 * getWidth returns the width of the QueuedWindow.
-	 * @return the width of the QueuedWindow.
+	 * getWidth returns the width of the WindowManager.
+	 * @return the width of the WindowManager.
 	 */
 	public int getWidth()
 	{
@@ -195,8 +195,8 @@ public class QueuedWindow
 	}
 
 	/**
-	 * getHeight returns the height of the QueuedWindow
-	 * @return the height of the QueuedWindow.
+	 * getHeight returns the height of the WindowManager
+	 * @return the height of the WindowManager.
 	 */
 	public int getHeight()
 	{

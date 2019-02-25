@@ -2,7 +2,7 @@ package net.whg.we.window;
 
 /**
  * The WindowListener is an interface whose purpose is to
- * listen for certain events being sent from QueuedWindow
+ * listen for certain events being sent from WindowManager
  * and take appropriate actions.
  */
 public interface WindowListener
