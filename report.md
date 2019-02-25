@@ -99,6 +99,16 @@ The communication between the threads is done by three main components: WindowMa
 #### Related Issue
 See [#8](https://github.com/software-fundamentals/WraithEngine3/issues/8).
 
+### 5: Documentation
+#### Description
+Most of the Window related functions and classes were undocumented, this is problemetatic when new develoeprs are joining the project.
+
+#### Refactoring
+All functions and classes in the package `whg.net.we.window` were documented in javadoc style.
+
+#### Related Issue
+See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
+
 ## Existing test cases relating to refactored code
 
 ## The refactoring carried out
