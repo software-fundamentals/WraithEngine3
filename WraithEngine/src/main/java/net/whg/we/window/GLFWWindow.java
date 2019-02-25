@@ -21,14 +21,14 @@ public class GLFWWindow implements Window
 	private int _width = 640;
 	private int _height = 480;
 	private long _windowId = 0;
-	private QueuedWindow _window;
+	private WindowManager _windowManager;
 	private Object _lock = new Object();
 	private float _mouseX;
 	private float _mouseY;
 
 	/**
 	 * setName changes the name of the window and adds the setNameInstant
-	 * function to the QueuedWindow event queue. If the window
+	 * function to the WindowManager event queue. If the window
 	 * is open, the function returns.
 	 * @param name String with the new name.
 	 */
@@ -41,16 +41,16 @@ public class GLFWWindow implements Window
 		_name = name;
 		Log.infof("Changed window title to %s.", name);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setNameInstant(_name);
+				_windowManager.setNameInstant(_name);
 			});
 	}
 
 	/**
 	 * setResizable changes the resizable state and adds the setReziableInstant
-	 * function to the QueuedWindow event queue.  If the window is open,
+	 * function to the WindowManager event queue.  If the window is open,
 	 * the function returns.
 	 * @param resizable boolean with the new resizable value.
 	 */
@@ -63,16 +63,16 @@ public class GLFWWindow implements Window
 		_resizable = resizable;
 		Log.infof("Changed window resizable to %s.", resizable);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setResizableInstant(_resizable);
+				_windowManager.setResizableInstant(_resizable);
 			});
 	}
 
 	/**
 	 * setVSync changes the vSync state and adds the setVSyncInstant
-	 * function to the QueuedWindow event queue. If the window is open,
+	 * function to the WindowManager event queue. If the window is open,
 	 * the function returns.
 	 * @param vSync boolean with the new vSync value.
 	 */
@@ -85,16 +85,16 @@ public class GLFWWindow implements Window
 		_vSync = vSync;
 		Log.infof("Changed window VSync to %s.", vSync);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setVSyncInstant(_vSync);
+				_windowManager.setVSyncInstant(_vSync);
 			});
 	}
 
 	/**
 	 * setSize changes the width and height and adds the
-	 * setSizeInstant function to the QueuedWindow event queue. If the
+	 * setSizeInstant function to the WindowManager event queue. If the
 	 * window is open, the function returns.
 	 * @param width  int with the new width.
 	 * @param height int with the new height.
@@ -109,10 +109,10 @@ public class GLFWWindow implements Window
 		_height = height;
 		Log.infof("Changed window size to %dx%d.", width, height);
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setSizeInstant(_width, _height);
+				_windowManager.setSizeInstant(_width, _height);
 			});
 	}
 
@@ -178,10 +178,10 @@ public class GLFWWindow implements Window
 				Log.trace("Creating window size callback.");
 				GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) ->
 				{
-					if (_window != null)
-						_window.addEvent(() ->
+					if (_windowManager != null)
+						_windowManager.addEvent(() ->
 						{
-							_window.setSizeInstant(_width, _height);
+							_windowManager.setSizeInstant(_width, _height);
 						});
 				});
 
@@ -198,10 +198,10 @@ public class GLFWWindow implements Window
 							else
 								state = KeyState.REPEATED;
 
-							if (_window != null)
-								_window.addEvent(() ->
+							if (_windowManager != null)
+								_windowManager.addEvent(() ->
 								{
-									_window.onKey(key, state, mods);
+									_windowManager.onKey(key, state, mods);
 								});
 						});
 
@@ -216,10 +216,10 @@ public class GLFWWindow implements Window
 				Log.trace("Creating text input callback.");
 				GLFW.glfwSetCharModsCallback(_windowId, (long window, int key, int mods) ->
 				{
-					if (_window != null)
-						_window.addEvent(() ->
+					if (_windowManager != null)
+						_windowManager.addEvent(() ->
 						{
-							_window.onType(key, mods);
+							_windowManager.onType(key, mods);
 						});
 				});
 
@@ -276,7 +276,7 @@ public class GLFWWindow implements Window
 
 	/**
 	 * requestClose makes a request to close the window and
-	 * adds the setSizeInstant function to the QueuedWindow
+	 * adds the setSizeInstant function to the WindowManager
 	 * event queue .
 	 */
 	@Override
@@ -288,10 +288,10 @@ public class GLFWWindow implements Window
 			GLFW.glfwSetWindowShouldClose(_windowId, true);
 		}
 
-		if (_window != null)
-			_window.addEvent(() ->
+		if (_windowManager != null)
+			_windowManager.addEvent(() ->
 			{
-				_window.setSizeInstant(_width, _height);
+				_windowManager.setSizeInstant(_width, _height);
 			});
 	}
 
@@ -303,8 +303,8 @@ public class GLFWWindow implements Window
 	@Override
 	public boolean endFrame()
 	{
-		if (_window != null)
-			_window.onMouseMove(_mouseX, _mouseY);
+		if (_windowManager != null)
+			_windowManager.onMouseMove(_mouseX, _mouseY);
 
 		synchronized (_lock)
 		{
@@ -339,14 +339,14 @@ public class GLFWWindow implements Window
 	}
 
 	/**
-	 * setQueuedWindow sets the QueuedWindow that should manage this windows'
+	 * setWindowManager sets the WindowManager that should manage this windows'
 	 * communication with the main thread.
-	 * @param window the QueuedWindow.
+	 * @param window the WindowManager.
 	 */
 	@Override
-	public void setQueuedWindow(QueuedWindow window)
+	public void setWindowManager(WindowManager windowManager)
 	{
-		_window = window;
+		_windowManager = windowManager;
 	}
 
 	/**

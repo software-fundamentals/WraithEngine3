@@ -8,7 +8,7 @@ import net.whg.we.rendering.Graphics;
  */
 interface Window
 {
-	void setQueuedWindow(QueuedWindow window);
+	void setWindowManager(WindowManager windowManager);
 
 	void setName(String name);
 
