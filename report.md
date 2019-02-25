@@ -108,11 +108,11 @@ For each team member, how much time was spent in
   * Josefin - 3 hours
 
 8. running code
-  William - 30 min
-  Miguel -
-  Sebastian -
-  Moa -
-  Josefin - 30 min
+  * William - 30 min
+  * Miguel -
+  * Sebastian -
+  * Moa -
+  * Josefin - 30 min
 
 ## Overall experience
 
