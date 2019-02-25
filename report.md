@@ -158,7 +158,6 @@ For each team member, how much time was spent in
   * Josefin - 30 min
 
 ## Overall experience
-
 *What are your main take-aways from this project? What did you learn?*
 
 First of all, I think we can safely say we've learned a whole lot about how a game engine
