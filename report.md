@@ -136,7 +136,7 @@ For each team member, how much time was spent in
 
 ## Overall experience
 
-_What are your main take-aways from this project? What did you learn?_
+*What are your main take-aways from this project? What did you learn?*
 
 First of all, I think we can safely say we've learned a whole lot about how a game engine
 works. Moreover, we experienced the difficulties of refactoring an entirely new codebase
