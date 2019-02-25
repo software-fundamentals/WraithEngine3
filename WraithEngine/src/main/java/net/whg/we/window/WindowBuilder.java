@@ -1,6 +1,7 @@
 package net.whg.we.window;
 
 import net.whg.we.rendering.Graphics;
+import net.whg.we.utils.DefaultWindowListener;
 
 /**
  * The WindowBuilder class initializes a Window and a WindowListener and
@@ -21,7 +22,7 @@ public class WindowBuilder
 	 * for that window as well as a Thread for the WindowManager.
 	 * @param  engine The type of window that should be initialized.
 	 */
-	public WindowBuilder(WindowEngine engine)
+	public WindowBuilder(WindowEngine engine, WindowListenerType listener)
 	{
 		Window window;
 
@@ -34,7 +35,23 @@ public class WindowBuilder
 				throw new IllegalArgumentException("Unknown window engine type!");
 		}
 
-		_windowManager = new WindowManager(window);
+		WindowListener windowListener;
+		switch (listener)
+		{
+			case DEFAULT:
+				windowListener = new DefaultWindowListener();
+				break;
+			case NO_LISTENER:
+				windowListener = null;
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown window listener type!");
+		}
+		if (windowListener != null) {
+			_windowManager = new WindowManager(window, windowListener);
+		} else {
+			_windowManager = new WindowManager(window);
+		}
 		Thread windowThread = new Thread(() ->
 		{
 			_windowManager.waitForEvents();
@@ -42,17 +59,6 @@ public class WindowBuilder
 		windowThread.setName("Window");
 		windowThread.setDaemon(false);
 		windowThread.start();
-	}
-
-	/**
-	 * setListener assigns a WindowListener to the current WindowManager
-	 * @param  listener The WindowListener that should be assigned.
-	 * @return          The current WindowBuilder.
-	 */
-	public WindowBuilder setListener(WindowListener listener)
-	{
-		_windowManager.setWindowListener(listener);
-		return this;
 	}
 
 	/**
