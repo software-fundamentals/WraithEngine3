@@ -1,9 +1,4 @@
 # Report for assignment 4
-
-This is a template for your report. You are free to modify it as needed.
-It is not required to use markdown for your report either, but the report
-has to be delivered in a standard, cross-platform format.
-
 ## Project
 
 Name: WraithEngine3
@@ -12,8 +7,6 @@ URL: https://github.com/Wraithaven/WraithEngine3
 
 WraithEngine is a Java-based game engine, developed by Wraithaven Games,
 built around the concept of mixing various plugins to make games.
-
-## Architectural overview (optional, as one item for P+)
 
 ## Selected issue(s)
 
@@ -123,7 +116,7 @@ For each team member, how much time was spent in
 
 ## Overall experience
 
-What are your main take-aways from this project? What did you learn?
+_What are your main take-aways from this project? What did you learn?_
 
 First of all, I think we can safely say we've learned a whole lot about how a game engine
 works. Moreover, we experienced the difficulties of refactoring an entirely new codebase
@@ -134,5 +127,3 @@ for our group that really required the joint forces of our brains to the largest
 It was also interesting to talk to the owner of the code himself and how to communicate
 effectively. Lastly, we all improved our understanding with respect to
 abstract classes and interfaces and how these can be incredibly useful in a project as such.
-
-Is there something special you want to mention here?
