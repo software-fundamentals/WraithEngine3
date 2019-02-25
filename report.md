@@ -120,7 +120,7 @@ For each team member, how much time was spent in
   * Josefin - 1 hour
 
 5. analyzing code/output
-  * William - 11 hours
+  * William - 8 hours
   * Miguel -
   * Sebastian -
   * Moa - 7 hours
