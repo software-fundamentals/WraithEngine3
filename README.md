@@ -18,3 +18,11 @@ WraithEngine is a game engine built around the focus of modularity and flexibili
 Yes, there's a lot of other game engines out there. Most are significantly nicer than this one. But the goal of WraithEngine is not to compete with them, but to offer a fun new way to develop games.
 
 In addition, there are many advantages for using WraithEngine over writing your own engine. First, WraithEngine takes care of most of the low level game engine code. So you don't need to worry about loading the correct rendering engine, or tweak optimization for hours. You can dive right into the higher level game logic. Secondly, with such a heavy focus on modding, WraithEngine allows for individuals to make their own games by simply mixing and matching different plugins without having to worry about writing their own. Even those who have never made a game in their life can make very few modpacks that take the player on an adventure without needing to understand what's going on under the hood.
+
+
+### Develop
+
+#### Window Management Engines
+WraithEngine aims to support multiple engines for window management. To add a new engine, start by adding the engine to the WindowEngine enum. Then add a case to the WindowBuilder class to support building your engine. Finally implement your Window engine class.
+
+Please note that the GraphicsPipeline class currently only calls WindowBuilder with the GLFW engine.
