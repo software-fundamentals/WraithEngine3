@@ -23,12 +23,11 @@ public class WindowManager
 	private WindowListener _listener;
 	private boolean _cursorEnabled = true;
 
-	/**
-	 * WindowBuilder takes an engine type as argument and if valid,
-	 * initializes that window. Then a WindowManager is initialized
-	 * for that window as well as a Thread for the WindowManager.
-	 * @param  engine The type of window that should be initialized.
-	 */
+	WindowManager(Window window, WindowListener listener) {
+		_window = window;
+		_window.setWindowManager(this);
+		_listener = listener;
+	}
 
 	/**
 	 * WindowManager takes a Window as argument, sets it to the current
@@ -61,16 +60,6 @@ public class WindowManager
 
 		_window.disposeWindow();
 	}
-
-	/**
-	 * setWindowListener assigns a WindowListener to the WindowManager.
-	 * @param  listener The WindowListener that should be assigned.
-	 */
-	public void setWindowListener(WindowListener listener)
-	{
-		_listener = listener;
-	}
-
 	/**
 	 * getWindow returns the current Window
 	 * @return The Window assigned to the _window variable.

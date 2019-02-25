@@ -1,10 +1,10 @@
 package net.whg.we.rendering;
 
-import net.whg.we.utils.DefaultWindowListener;
 import net.whg.we.utils.Screen;
 import net.whg.we.window.WindowManager;
 import net.whg.we.window.WindowBuilder;
 import net.whg.we.window.WindowEngine;
+import net.whg.we.window.WindowListenerType;
 
 /**
  * The GraphicsPipeline class initializes a window with associated
@@ -23,9 +23,8 @@ public class GraphicsPipeline
 	public GraphicsPipeline()
 	{
 		_graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
-		_windowManager = new WindowBuilder(WindowEngine.GLFW).setName("WraithEngine")
-				.setResizable(false).setSize(800, 600).setVSync(false)
-				.setListener(new DefaultWindowListener()).setGraphicsEngine(_graphics).build();
+		_windowManager = new WindowBuilder(WindowEngine.GLFW, WindowListenerType.DEFAULT).setName("WraithEngine")
+				.setResizable(false).setSize(800, 600).setVSync(false).setGraphicsEngine(_graphics).build();
 		_graphics.init();
 		Screen.setWindow(_windowManager);
 	}
