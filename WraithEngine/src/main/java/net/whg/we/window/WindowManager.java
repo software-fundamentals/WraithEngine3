@@ -23,7 +23,8 @@ public class WindowManager
 	private WindowListener _listener;
 	private boolean _cursorEnabled = true;
 
-	WindowManager(Window window, WindowListener listener) {
+	WindowManager(Window window, WindowListener listener)
+	{
 		_window = window;
 		_window.setWindowCallback(new WindowCallback(this));
 		_listener = listener;
@@ -200,12 +201,13 @@ public class WindowManager
 	{
 		addRequest(() ->
 		{
-			if (_window.setName(name)) {
-                addEvent(() ->
-                {
-                    setNameInstant(name);
-                });
-            }
+			if (_window.setName(name))
+			{
+				addEvent(() ->
+				{
+					setNameInstant(name);
+				});
+			}
 		});
 	}
 
@@ -227,12 +229,13 @@ public class WindowManager
 	{
 		addRequest(() ->
 		{
-			if (_window.setResizable(resizable)) {
-                addEvent(() ->
-                {
-                    setResizableInstant(resizable);
-                });
-            }
+			if (_window.setResizable(resizable))
+			{
+				addEvent(() ->
+				{
+					setResizableInstant(resizable);
+				});
+			}
 		});
 	}
 
@@ -255,12 +258,13 @@ public class WindowManager
 	{
 		addRequest(() ->
 		{
-			if (_window.setVSync(vSync)) {
-                addEvent(() ->
-                {
-                    setVSyncInstant(vSync);
-                });
-            }
+			if (_window.setVSync(vSync))
+			{
+				addEvent(() ->
+				{
+					setVSyncInstant(vSync);
+				});
+			}
 		});
 	}
 
@@ -284,12 +288,13 @@ public class WindowManager
 	{
 		addRequest(() ->
 		{
-			if (_window.setSize(width, height)) {
-                addEvent(() ->
-                {
-                    setSizeInstant(width, height);
-                });
-            }
+			if (_window.setSize(width, height))
+			{
+				addEvent(() ->
+				{
+					setSizeInstant(width, height);
+				});
+			}
 		});
 	}
 

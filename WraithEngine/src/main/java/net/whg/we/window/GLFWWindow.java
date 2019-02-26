@@ -19,20 +19,21 @@ public class GLFWWindow extends AbstractDesktopWindow
 	private Object _lock = new Object();
 	private float _mouseX;
 	private float _mouseY;
-    private WindowCallback _windowCallback;
+	private WindowCallback _windowCallback;
 
-	public GLFWWindow() {
+	public GLFWWindow()
+	{
 		super("WraithEngine Project", false, false, 640, 480);
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setWindowCallback(WindowCallback windowCallback)
-    {
-        _windowCallback = windowCallback;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setWindowCallback(WindowCallback windowCallback)
+	{
+		_windowCallback = windowCallback;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -83,7 +84,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 
 			Log.trace("Building hidden window.");
 			_windowId =
-					GLFW.glfwCreateWindow(width(), height(), name(), MemoryUtil.NULL, MemoryUtil.NULL);
+				GLFW.glfwCreateWindow(width(), height(), name(), MemoryUtil.NULL, MemoryUtil.NULL);
 			Log.tracef("  Recieved window id %d.", _windowId);
 			if (_windowId == 0)
 				throw new RuntimeException("Failed to create GLFW window!");
@@ -96,7 +97,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 				GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) ->
 				{
 					if (_windowCallback != null)
-                        _windowCallback.setSize(width(), height());
+						_windowCallback.setSize(width(), height());
 				});
 
 				Log.trace("Creating key callback.");
@@ -113,7 +114,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 								state = KeyState.REPEATED;
 
 							if (_windowCallback != null)
-                                _windowCallback.onKey(key, state, mods);
+								_windowCallback.onKey(key, state, mods);
 						});
 
 				Log.trace("Creating mouse position callback.");
@@ -128,7 +129,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 				GLFW.glfwSetCharModsCallback(_windowId, (long window, int key, int mods) ->
 				{
 					if (_windowCallback != null)
-                        _windowCallback.onType(key, mods);
+						_windowCallback.onType(key, mods);
 				});
 
 				Log.unindent();
@@ -195,7 +196,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 		}
 
 		if (_windowCallback != null)
-            _windowCallback.setSize(width(), height());
+			_windowCallback.setSize(width(), height());
 	}
 
 	/**
@@ -206,8 +207,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 	@Override
 	public boolean endFrame()
 	{
-        if (_windowCallback != null)
-            _windowCallback.onMouseMove(_mouseX, _mouseY);
+		if (_windowCallback != null)
+			_windowCallback.onMouseMove(_mouseX, _mouseY);
 
 		synchronized (_lock)
 		{

@@ -3,7 +3,7 @@ package net.whg.we.window;
 import net.whg.we.utils.logging.Log;
 
 public abstract class AbstractDesktopWindow implements Window {
-	
+
 	private String _name;
 	private boolean _resizable;
 	private boolean _vSync;
@@ -11,7 +11,8 @@ public abstract class AbstractDesktopWindow implements Window {
 	private int _height;
 
 	protected AbstractDesktopWindow(String name, boolean resizable, boolean vSync,
-			int width, int height) {
+			int width, int height)
+	{
 		_name = name;
 		_resizable = resizable;
 		_vSync = vSync;
@@ -37,7 +38,7 @@ public abstract class AbstractDesktopWindow implements Window {
 
 		_name = name;
 		Log.infof("Changed window title to %s.", name);
-        return true;
+		return true;
 	}
 
 	/**
@@ -51,7 +52,7 @@ public abstract class AbstractDesktopWindow implements Window {
 
 		_resizable = resizable;
 		Log.infof("Changed window resizable to %s.", resizable);
-        return true;
+		return true;
 	}
 
 	/**
@@ -65,7 +66,7 @@ public abstract class AbstractDesktopWindow implements Window {
 
 		_vSync = vSync;
 		Log.infof("Changed window VSync to %s.", vSync);
-        return true;
+		return true;
 	}
 
 	/**
@@ -80,26 +81,31 @@ public abstract class AbstractDesktopWindow implements Window {
 		_width = width;
 		_height = height;
 		Log.infof("Changed window size to %dx%d.", width, height);
-        return true;
+		return true;
 	}
 
-	protected String name() {
+	protected String name()
+	{
 		return _name;
 	}
 
-	protected boolean resizable() {
+	protected boolean resizable()
+	{
 		return _resizable;
 	}
 
-	protected boolean vSync() {
+	protected boolean vSync()
+	{
 		return _vSync;
 	}
 
-	protected int width() {
+	protected int width()
+	{
 		return _width;
 	}
 
-	protected int height() {
+	protected int height()
+	{
 		return _height;
 	}
 }

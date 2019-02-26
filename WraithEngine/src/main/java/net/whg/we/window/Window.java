@@ -20,7 +20,7 @@ interface Window
 	 * function to the WindowManager event queue. If the window
 	 * is open, the function returns.
 	 * @param name String with the new name.
-     * @return true if success
+	 * @return true if success
 	 */
 	boolean setName(String name);
 
@@ -29,7 +29,7 @@ interface Window
 	 * function to the WindowManager event queue.  If the window is open,
 	 * the function returns.
 	 * @param resizable boolean with the new resizable value.
-     * @return true if success
+	 * @return true if success
 	 */
 	boolean setResizable(boolean resizable);
 
@@ -38,7 +38,7 @@ interface Window
 	 * function to the WindowManager event queue. If the window is open,
 	 * the function returns.
 	 * @param vSync boolean with the new vSync value.
-     * @return true if success
+	 * @return true if success
 	 */
 	boolean setVSync(boolean vSync);
 
@@ -48,7 +48,7 @@ interface Window
 	 * window is open, the function returns.
 	 * @param width  int with the new width.
 	 * @param height int with the new height.
-     * @return true if success
+	 * @return true if success
 	 */
 	boolean setSize(int width, int height);
 
