@@ -9,7 +9,6 @@ public abstract class AbstractDesktopWindow implements Window {
 	private boolean _vSync;
 	private int _width;
 	private int _height;
-	private WindowManager _windowManager;
 
 	protected AbstractDesktopWindow(String name, boolean resizable, boolean vSync,
 			int width, int height) {
@@ -31,86 +30,57 @@ public abstract class AbstractDesktopWindow implements Window {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setName(String name)
+	public boolean setName(String name)
 	{
 		if (isWindowOpen())
-			return;
+			return false;
 
 		_name = name;
 		Log.infof("Changed window title to %s.", name);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setNameInstant(_name);
-			});
+        return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setResizable(boolean resizable)
+	public boolean setResizable(boolean resizable)
 	{
 		if (isWindowOpen())
-			return;
+			return false ;
 
 		_resizable = resizable;
 		Log.infof("Changed window resizable to %s.", resizable);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setResizableInstant(_resizable);
-			});
+        return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setVSync(boolean vSync)
+	public boolean setVSync(boolean vSync)
 	{
 		if (isWindowOpen())
-			return;
+			return false;
 
 		_vSync = vSync;
 		Log.infof("Changed window VSync to %s.", vSync);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setVSyncInstant(_vSync);
-			});
+        return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setSize(int width, int height)
+	public boolean setSize(int width, int height)
 	{
 		if (isWindowOpen())
-			return;
+			return false;
 
 		_width = width;
 		_height = height;
 		Log.infof("Changed window size to %dx%d.", width, height);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setSizeInstant(_width, _height);
-			});
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setWindowManager(WindowManager windowManager)
-	{
-		_windowManager = windowManager;
+        return true;
 	}
 
 	protected String name() {
@@ -131,9 +101,5 @@ public abstract class AbstractDesktopWindow implements Window {
 
 	protected int height() {
 		return _height;
-	}
-
-	protected WindowManager windowManager() {
-		return _windowManager;
 	}
 }
