@@ -29,12 +29,25 @@ the code.
 
 ## Requirements affected by functionality being refactored
 
-### 1: Make it easier to add window engines
-Currently the window engine is specified in the WindowBuilder class as an integer.
-In the future this can be difficult to keep track of and can introduce bugs.
+### 1: Support GLFW Window Management Engine
+#### Description
+Originally, the only window manager supported was GLFW. Therefore it is important that this integration remains intact and reliable.
 
-#### Plan for Testing and Refactoring
-To to this we will introduce a class for enumerating different Window Engines. Then to add an engine it is only necessary to add it to the enum and then use the enum in the WindowBuilder. Since a project will not compile if we are using a enum type that does not exist, it can be argued that testing is not really necessary for the enum class. Instead, the classes that use the enum class should cover different values in their tests.
+#### Refactoring
+To solve this, we refactored the `GLFWWindow` class into an abstract class for desktop windows (that implements the Window interface), and then extended this class into the new `GLFWWindow` class. The abstract class, called `AbstractDesktopWindow`, has some methods that are specific to desktop (in contrast to for example mobile windows) for example _resizeable_ and _vsync_ methods.
+
+#### Related issue
+See [#6](https://github.com/software-fundamentals/WraithEngine3/issues/6)
+
+### 2: Support additional Window Management Engines
+#### Description
+ In the future we expect there to be desktop window managers other than GLFW that WraithEngine may want to support, and it should be simple to implement a new such class.
+ 
+#### Refactoring
+This requirement is met in basically the same way as (1). By refactoring `GLFWWindow` into an abstract class, we also made created a pattern for implementing new classes for other types of windows. Additionally we created a window manager engine enumeration for enabling keeping track of available engines. 
+
+#### Related issues
+See [#6](https://github.com/software-fundamentals/WraithEngine3/issues/6) and [#7](https://github.com/software-fundamentals/WraithEngine3/issues/7)
 
 ### 3: Remove tight coupling between `WindowManager` and `Window`
 #### Description
@@ -89,49 +102,49 @@ For each team member, how much time was spent in
   * William -  2 hours
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 3 hours
   * Josefin - 3 hours
 
 3. reading documentation
   * William - 30 min
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 30 min
   * Josefin - 30 min
 
 4. configuration
   * William - 1 hour 30 min
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 1.5 hour
   * Josefin - 1 hour
 
 5. analyzing code/output
   * William - 11 hours
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 7 hours
   * Josefin - 6 hours
 
 6. writing documentation
   * William - 3 hours
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 4.5 hours
   * Josefin - 6 hours
 
 7. writing code
   * William - 6 hours
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 6.5
   * Josefin - 3 hours
 
 8. running code
   * William - 30 min
   * Miguel -
   * Sebastian -
-  * Moa -
+  * Moa - 1 hour
   * Josefin - 30 min
 
 ## Overall experience
