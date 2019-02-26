@@ -19,9 +19,20 @@ public class GLFWWindow extends AbstractDesktopWindow
 	private Object _lock = new Object();
 	private float _mouseX;
 	private float _mouseY;
+	private WindowCallback _windowCallback;
 
-	public GLFWWindow() {
+	public GLFWWindow()
+	{
 		super("WraithEngine Project", false, false, 640, 480);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setWindowCallback(WindowCallback windowCallback)
+	{
+		_windowCallback = windowCallback;
 	}
 
 	/**
@@ -73,7 +84,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 
 			Log.trace("Building hidden window.");
 			_windowId =
-					GLFW.glfwCreateWindow(width(), height(), name(), MemoryUtil.NULL, MemoryUtil.NULL);
+				GLFW.glfwCreateWindow(width(), height(), name(), MemoryUtil.NULL, MemoryUtil.NULL);
 			Log.tracef("  Recieved window id %d.", _windowId);
 			if (_windowId == 0)
 				throw new RuntimeException("Failed to create GLFW window!");
@@ -85,11 +96,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 				Log.trace("Creating window size callback.");
 				GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) ->
 				{
-					if (windowManager() != null)
-						windowManager().addEvent(() ->
-						{
-							windowManager().setSizeInstant(width(), height());
-						});
+					if (_windowCallback != null)
+						_windowCallback.setSize(width(), height());
 				});
 
 				Log.trace("Creating key callback.");
@@ -105,11 +113,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 							else
 								state = KeyState.REPEATED;
 
-							if (windowManager() != null)
-								windowManager().addEvent(() ->
-								{
-									windowManager().onKey(key, state, mods);
-								});
+							if (_windowCallback != null)
+								_windowCallback.onKey(key, state, mods);
 						});
 
 				Log.trace("Creating mouse position callback.");
@@ -123,11 +128,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 				Log.trace("Creating text input callback.");
 				GLFW.glfwSetCharModsCallback(_windowId, (long window, int key, int mods) ->
 				{
-					if (windowManager() != null)
-						windowManager().addEvent(() ->
-						{
-							windowManager().onType(key, mods);
-						});
+					if (_windowCallback != null)
+						_windowCallback.onType(key, mods);
 				});
 
 				Log.unindent();
@@ -182,8 +184,7 @@ public class GLFWWindow extends AbstractDesktopWindow
 
 	/**
 	 * requestClose makes a request to close the window and
-	 * adds the setSizeInstant function to the WindowManager
-	 * event queue .
+	 * sends its size to the callback object, if there is one.
 	 */
 	@Override
 	public void requestClose()
@@ -194,11 +195,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 			GLFW.glfwSetWindowShouldClose(_windowId, true);
 		}
 
-		if (windowManager() != null)
-			windowManager().addEvent(() ->
-			{
-				windowManager().setSizeInstant(width(), height());
-			});
+		if (_windowCallback != null)
+			_windowCallback.setSize(width(), height());
 	}
 
 	/**
@@ -209,8 +207,8 @@ public class GLFWWindow extends AbstractDesktopWindow
 	@Override
 	public boolean endFrame()
 	{
-		if (windowManager() != null)
-			windowManager().onMouseMove(_mouseX, _mouseY);
+		if (_windowCallback != null)
+			_windowCallback.onMouseMove(_mouseX, _mouseY);
 
 		synchronized (_lock)
 		{

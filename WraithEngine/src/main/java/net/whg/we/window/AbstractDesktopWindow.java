@@ -3,16 +3,16 @@ package net.whg.we.window;
 import net.whg.we.utils.logging.Log;
 
 public abstract class AbstractDesktopWindow implements Window {
-	
+
 	private String _name;
 	private boolean _resizable;
 	private boolean _vSync;
 	private int _width;
 	private int _height;
-	private WindowManager _windowManager;
 
 	protected AbstractDesktopWindow(String name, boolean resizable, boolean vSync,
-			int width, int height) {
+			int width, int height)
+	{
 		_name = name;
 		_resizable = resizable;
 		_vSync = vSync;
@@ -31,109 +31,81 @@ public abstract class AbstractDesktopWindow implements Window {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setName(String name)
+	public boolean setName(String name)
 	{
 		if (isWindowOpen())
-			return;
+			return false;
 
 		_name = name;
 		Log.infof("Changed window title to %s.", name);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setNameInstant(_name);
-			});
+		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setResizable(boolean resizable)
+	public boolean setResizable(boolean resizable)
 	{
 		if (isWindowOpen())
-			return;
+			return false ;
 
 		_resizable = resizable;
 		Log.infof("Changed window resizable to %s.", resizable);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setResizableInstant(_resizable);
-			});
+		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setVSync(boolean vSync)
+	public boolean setVSync(boolean vSync)
 	{
 		if (isWindowOpen())
-			return;
+			return false;
 
 		_vSync = vSync;
 		Log.infof("Changed window VSync to %s.", vSync);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setVSyncInstant(_vSync);
-			});
+		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setSize(int width, int height)
+	public boolean setSize(int width, int height)
 	{
 		if (isWindowOpen())
-			return;
+			return false;
 
 		_width = width;
 		_height = height;
 		Log.infof("Changed window size to %dx%d.", width, height);
-
-		if (_windowManager != null)
-			_windowManager.addEvent(() ->
-			{
-				_windowManager.setSizeInstant(_width, _height);
-			});
+		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setWindowManager(WindowManager windowManager)
+	protected String name()
 	{
-		_windowManager = windowManager;
-	}
-
-	protected String name() {
 		return _name;
 	}
 
-	protected boolean resizable() {
+	protected boolean resizable()
+	{
 		return _resizable;
 	}
 
-	protected boolean vSync() {
+	protected boolean vSync()
+	{
 		return _vSync;
 	}
 
-	protected int width() {
+	protected int width()
+	{
 		return _width;
 	}
 
-	protected int height() {
+	protected int height()
+	{
 		return _height;
-	}
-
-	protected WindowManager windowManager() {
-		return _windowManager;
 	}
 }

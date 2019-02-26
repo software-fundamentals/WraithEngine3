@@ -47,9 +47,12 @@ public class WindowBuilder
 			default:
 				throw new IllegalArgumentException("Unknown window listener type!");
 		}
-		if (windowListener != null) {
+		if (windowListener != null)
+		{
 			_windowManager = new WindowManager(window, windowListener);
-		} else {
+		}
+		else
+		{
 			_windowManager = new WindowManager(window);
 		}
 		Thread windowThread = new Thread(() ->
