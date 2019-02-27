@@ -1,15 +1,15 @@
 package net.whg.we.window;
 
-public class WindowCallback
+class WindowCallback
 {
 	private WindowManager _windowManager;
 
-	public WindowCallback(WindowManager windowManager)
+	WindowCallback(WindowManager windowManager)
 	{
 		_windowManager = windowManager;
 	}
 
-	public void setSize(int width, int height)
+	void setSize(int width, int height)
 	{
 		_windowManager.addEvent(() ->
 		{
@@ -17,7 +17,7 @@ public class WindowCallback
 		});
 	}
 
-	public void onKey(int key, KeyState state, int mods)
+	void onKey(int key, KeyState state, int mods)
 	{
 		_windowManager.addEvent(() ->
 		{
@@ -25,7 +25,7 @@ public class WindowCallback
 		});
 	}
 
-	public void onType(int key, int mods)
+	void onType(int key, int mods)
 	{
 		_windowManager.addEvent(() ->
 		{
@@ -33,7 +33,7 @@ public class WindowCallback
 		});
 	}
 
-	public void onMouseMove(float mouseX, float mouseY)
+	void onMouseMove(float mouseX, float mouseY)
 	{
 		_windowManager.onMouseMove(mouseX, mouseY);
 	}
