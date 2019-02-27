@@ -2,6 +2,10 @@ package net.whg.we.window;
 
 import net.whg.we.rendering.Graphics;
 
+/**
+ * The Window is an interface whose purpose is to modify
+ * the state of the window.
+ */
 interface Window
 {
 	void setQueuedWindow(QueuedWindow window);

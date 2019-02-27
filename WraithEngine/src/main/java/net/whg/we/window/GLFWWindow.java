@@ -9,6 +9,10 @@ import org.lwjgl.system.MemoryUtil;
 import net.whg.we.rendering.Graphics;
 import net.whg.we.utils.logging.Log;
 
+/**
+ * The GLFWWindow class implements the Window interface and
+ * ties with GLFW, a C++ library for handling window management.
+ */
 public class GLFWWindow implements Window
 {
 	private String _name = "WraithEngine Project";
@@ -22,6 +26,12 @@ public class GLFWWindow implements Window
 	private float _mouseX;
 	private float _mouseY;
 
+	/**
+	 * setName changes the name of the window and adds the setNameInstant
+	 * function to the QueuedWindow event queue. If the window
+	 * is open, the function returns.
+	 * @param name String with the new name.
+	 */
 	@Override
 	public void setName(String name)
 	{
@@ -38,6 +48,12 @@ public class GLFWWindow implements Window
 			});
 	}
 
+	/**
+	 * setResizable changes the resizable state and adds the setReziableInstant
+	 * function to the QueuedWindow event queue.  If the window is open,
+	 * the function returns.
+	 * @param resizable boolean with the new resizable value.
+	 */
 	@Override
 	public void setResizable(boolean resizable)
 	{
@@ -54,6 +70,12 @@ public class GLFWWindow implements Window
 			});
 	}
 
+	/**
+	 * setVSync changes the vSync state and adds the setVSyncInstant
+	 * function to the QueuedWindow event queue. If the window is open,
+	 * the function returns.
+	 * @param vSync boolean with the new vSync value.
+	 */
 	@Override
 	public void setVSync(boolean vSync)
 	{
@@ -70,6 +92,13 @@ public class GLFWWindow implements Window
 			});
 	}
 
+	/**
+	 * setSize changes the width and height and adds the
+	 * setSizeInstant function to the QueuedWindow event queue. If the
+	 * window is open, the function returns.
+	 * @param width  int with the new width.
+	 * @param height int with the new height.
+	 */
 	@Override
 	public void setSize(int width, int height)
 	{
@@ -87,11 +116,21 @@ public class GLFWWindow implements Window
 			});
 	}
 
+	/**
+	 * isWindowOpen checks if the window is open by checking
+	 * if the _windowId has been set.
+	 * @return true if the window is open, false otherwise.
+	 */
 	public boolean isWindowOpen()
 	{
 		return _windowId != MemoryUtil.NULL;
 	}
 
+	/**
+	 * buildWindow builds the current window by initializing the
+	 * GLFW library, setting window hint values, creating callbacks,
+	 * centering the window and making it visible.
+	 */
 	@Override
 	public void buildWindow()
 	{
@@ -206,6 +245,10 @@ public class GLFWWindow implements Window
 		Log.unindent();
 	}
 
+	/**
+	 * disposeWindow tries to destroy the current window. If the window is
+	 * open, the function returns.
+	 */
 	@Override
 	public void disposeWindow()
 	{
@@ -231,6 +274,11 @@ public class GLFWWindow implements Window
 		}
 	}
 
+	/**
+	 * requestClose makes a request to close the window and
+	 * adds the setSizeInstant function to the QueuedWindow
+	 * event queue .
+	 */
 	@Override
 	public void requestClose()
 	{
@@ -247,6 +295,11 @@ public class GLFWWindow implements Window
 			});
 	}
 
+	/**
+	 * endFrame sets the mouse position and swaps the front
+	 * and back buffers of the window.
+	 * @return the value of the close flag of the window.
+	 */
 	@Override
 	public boolean endFrame()
 	{
@@ -260,6 +313,14 @@ public class GLFWWindow implements Window
 		}
 	}
 
+	/**
+	 * initGraphics is a synchronized function which initializes
+	 * the specified graphics and makes the window the current of
+	 * the calling thread. If _vSync is true, there has to be one
+	 * screen update before swapping buffers, otherwise no updates
+	 * are required.
+	 * @param graphics the Graphics that should be initialized.
+	 */
 	@Override
 	public void initGraphics(Graphics graphics)
 	{
@@ -277,18 +338,31 @@ public class GLFWWindow implements Window
 		}
 	}
 
+	/**
+	 * setQueuedWindow sets the QueuedWindow that should manage this windows'
+	 * communication with the main thread.
+	 * @param window the QueuedWindow.
+	 */
 	@Override
 	public void setQueuedWindow(QueuedWindow window)
 	{
 		_window = window;
 	}
 
+	/**
+	 * updateWindow puts the thread to sleep until there is at least one event in the event queue
+	 * or the timeout (0.001 seconds) is reached.
+	 */
 	@Override
 	public void updateWindow()
 	{
 		GLFW.glfwWaitEventsTimeout(0.001f);
 	}
 
+	/**
+	 * setCursorEnabled toggles the visibility of the cursor.
+	 * @param cursorEnabled boolean that displays (true) or hides (false) the cursor.
+	 */
 	@Override
 	public void setCursorEnabled(boolean cursorEnabled)
 	{

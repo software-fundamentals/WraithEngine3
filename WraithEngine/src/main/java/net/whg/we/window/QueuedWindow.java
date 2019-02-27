@@ -3,6 +3,11 @@ package net.whg.we.window;
 import java.util.LinkedList;
 import net.whg.we.rendering.Graphics;
 
+/**
+ * The QueuedWindow class is responsible for handling the synchronized
+ * communication between the main thread and the window thread by making use
+ * of thread-safe message queues.
+ */
 public class QueuedWindow
 {
 	private Window _window;
@@ -18,12 +23,29 @@ public class QueuedWindow
 	private WindowListener _listener;
 	private boolean _cursorEnabled = true;
 
+	/**
+	 * WindowBuilder takes an engine type as argument and if valid,
+	 * initializes that window. Then a QueuedWindow is initialized
+	 * for that window as well as a Thread for the QueuedWindow.
+	 * @param  engine The type of window that should be initialized.
+	 */
+
+	/**
+	 * QueuedWindow takes a Window as argument, sets it to the current
+	 * window and assigns itself as its QueuedWindow.
+	 * @param  window The Window that the QueuedWindow should communicate with.
+	 */
 	QueuedWindow(Window window)
 	{
 		_window = window;
 		_window.setQueuedWindow(this);
 	}
 
+	/**
+	 * waitForEvents looks at the variable _requestClose and while it's false
+	 * it keeps calling the updateWindow function of _window. Inside that loop
+	 * it lets one thread look at the requests and run the first request in the line.
+	 */
 	void waitForEvents()
 	{
 		while (!_requestClose)
@@ -40,16 +62,28 @@ public class QueuedWindow
 		_window.disposeWindow();
 	}
 
+	/**
+	 * setWindowListener assigns a WindowListener to the QueuedWindow.
+	 * @param  listener The WindowListener that should be assigned.
+	 */
 	public void setWindowListener(WindowListener listener)
 	{
 		_listener = listener;
 	}
 
+	/**
+	 * getWindow returns the current Window
+	 * @return The Window assigned to the _window variable.
+	 */
 	Window getWindow()
 	{
 		return _window;
 	}
 
+	/**
+	 * buildWindow adds the Window function buildWindow
+	 * to the list of requests.
+	 */
 	void buildWindow()
 	{
 		addRequest(() ->
@@ -58,6 +92,11 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setCursorEnabled adds the Window function setCursorEnabled
+	 * to the list of requests.
+	 * @param cursorEnabled the boolean to sent as parameter to the function.
+	 */
 	public void setCursorEnabled(boolean cursorEnabled)
 	{
 		addRequest(() ->
@@ -66,11 +105,20 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setCursorEnabledInstant sets the cursorEnabled value instead of putting
+	 * it in the request queue.
+	 * @param cursorEnabled boolean that should be assigned to _cursorEnabled.
+	 */
 	void setCursorEnabledInstant(boolean cursorEnabled)
 	{
 		_cursorEnabled = cursorEnabled;
 	}
 
+	/**
+	 * isCursorEnabled returns the value of _cursorEnabled.
+	 * @return true if _cursorEnabled is true, false otherwise.
+	 */
 	public boolean isCursorEnabled()
 	{
 		return _cursorEnabled;
@@ -84,6 +132,11 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * addRequest lets one thread add a WindowRequest to the
+	 * _request LinkedList.
+	 * @param r The WindowRequest to be added.
+	 */
 	private void addRequest(WindowRequest r)
 	{
 		synchronized (_requests)
@@ -92,6 +145,11 @@ public class QueuedWindow
 		}
 	}
 
+	/**
+	 * addEvent lets one thread add a WindowEvent to the
+	 * _events LinkedList.
+	 * @param e The WindowEvent to be added.
+	 */
 	void addEvent(WindowEvent e)
 	{
 		synchronized (_events)
@@ -100,31 +158,55 @@ public class QueuedWindow
 		}
 	}
 
+	/**
+	 * getName returns the value of _name.
+	 * @return the name of the QueuedWindow.
+	 */
 	public String getName()
 	{
 		return _name;
 	}
 
+	/**
+	 * isResizable returns the value of _isResizable.
+	 * @return true if _isResizableis true, false otherwise.
+	 */
 	public boolean isResizable()
 	{
 		return _isResizable;
 	}
 
+	/**
+	 * isVSync returns the value of _vSync.
+	 * @return true if _vSync is true, false otherwise.
+	 */
 	public boolean isVSync()
 	{
 		return _vSync;
 	}
 
+	/**
+	 * getWidth returns the width of the QueuedWindow.
+	 * @return the width of the QueuedWindow.
+	 */
 	public int getWidth()
 	{
 		return _width;
 	}
 
+	/**
+	 * getHeight returns the height of the QueuedWindow
+	 * @return the height of the QueuedWindow.
+	 */
 	public int getHeight()
 	{
 		return _height;
 	}
 
+	/**
+	 * setName adds the Window function setName to the list of requests.
+	 * @param name the String to be sent as parameter to the function.
+	 */
 	public void setName(String name)
 	{
 		addRequest(() ->
@@ -133,11 +215,20 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setNameInstant sets the name instead of putting it into the request queue.
+	 * @param name the String with the new name.
+	 */
 	void setNameInstant(String name)
 	{
 		_name = name;
 	}
 
+	/**
+	 * setResizable adds the Window function setResizable to the list
+	 * of requests.
+	 * @param resizable the boolean to be sent as parameter to the function.
+	 */
 	public void setResizable(boolean resizable)
 	{
 		addRequest(() ->
@@ -146,11 +237,21 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setResizableInstant sets the resizable value instead of putting
+	 * it into the request queue.
+	 * @param resizable the boolean with the new resizable value.
+	 */
 	void setResizableInstant(boolean resizable)
 	{
 		_isResizable = resizable;
 	}
 
+	/**
+	 * setVSync adds the Window function setVSync to the the list
+	 * of requests.
+	 * @param vSync the boolean to be sent as parameter to the function.
+	 */
 	public void setVSync(boolean vSync)
 	{
 		addRequest(() ->
@@ -159,11 +260,22 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setVSyncInstant sets the vSync value instead of putting
+	 * it into the request queue.
+	 * @param vSync the boolean with the new vSync value.
+	 */
 	void setVSyncInstant(boolean vSync)
 	{
 		_vSync = vSync;
 	}
 
+	/**
+	 * setSize adds the Window function setSize to the list
+	 * of requests.
+	 * @param width  the width to be sent as parameter to the function.
+	 * @param height the height to be sent as parameter to the function.
+	 */
 	public void setSize(int width, int height)
 	{
 		addRequest(() ->
@@ -172,6 +284,13 @@ public class QueuedWindow
 		});
 	}
 
+	/**
+	 * setSizeInstant sets the height and width of the window
+	 * instead of putting it into the request queue and notifies
+	 * the WindowListener of this event.
+	 * @param width  the int with the new width.
+	 * @param height the int with the new height.
+	 */
 	void setSizeInstant(int width, int height)
 	{
 		_width = width;
@@ -181,18 +300,34 @@ public class QueuedWindow
 			_listener.onWindowResized(width, height);
 	}
 
+	/**
+	 * onKey notifies the WindowListener of an onKey event.
+	 * @param key   the affected key.
+	 * @param state which state the key is in
+	 * @param mods  possible modification key.
+	 */
 	void onKey(int key, KeyState state, int mods)
 	{
 		if (_listener != null)
 			_listener.onKey(key, state, mods);
 	}
 
+	/**
+	 * onType notifies the WindowListener of an onType event.
+	 * @param key  the key that was pressed.
+	 * @param mods possible modification key.
+	 */
 	void onType(int key, int mods)
 	{
 		if (_listener != null)
 			_listener.onType(key, mods);
 	}
 
+	/**
+	 * onMouseMove notifies the WindowListener of an onMouseMoved event.
+	 * @param mouseX the X-value of the mouse.
+	 * @param mouseY the Y-value of the mouse.
+	 */
 	void onMouseMove(float mouseX, float mouseY)
 	{
 		if (_listener != null)
@@ -222,6 +357,10 @@ public class QueuedWindow
 		return false;
 	}
 
+	/**
+	 * blockUntilRequestsFinish lets the Thread wait
+	 * until the list of requests is empty.
+	 */
 	private void blockUntilRequestsFinish()
 	{
 		while (true)
@@ -242,6 +381,12 @@ public class QueuedWindow
 		}
 	}
 
+	/**
+	 * initGraphics wait until there are no request
+	 * and then initializes the Window graphics by calling
+	 * the initGraphics function.
+	 * @param graphics the Graphics that should be initialized.
+	 */
 	void initGraphics(Graphics graphics)
 	{
 		blockUntilRequestsFinish();
