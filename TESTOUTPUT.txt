@@ -1,0 +1,51 @@
+[11:40:52][Info][main] ------------TestWindowBuilderNoListener started-----------
+[11:40:53][Info][Window] Changed window title to WraithEngine.
+[11:40:53][Info][Window] Changed window resizable to true.
+[11:40:53][Info][Window] Changed window size to 800x600.
+[11:40:53][Info][Window] Changed window VSync to false.
+[11:40:53][Info][Window] Changed window size to 600x400.
+[11:40:53][Info][Window] Building GLFW window.
+[11:40:53][Info][main] Linking GLFW window to OpenGL.
+[11:40:53][Info][main] WindowManager size: 600
+[11:40:53][Info][main] Screen size: 640
+[11:40:53][Info][main] ------------TestWindowSetVSync started-----------
+[11:40:53][Info][Window] Changed window title to WraithEngine.
+[11:40:53][Info][Window] Changed window resizable to true.
+[11:40:53][Info][Window] Changed window size to 800x600.
+[11:40:53][Info][Window] Changed window VSync to false.
+[11:40:53][Info][Window] Changed window VSync to true.
+[11:40:53][Info][Window] Building GLFW window.
+[11:40:53][Info][main] Linking GLFW window to OpenGL.
+[11:40:53][Info][main] WindowManager vSync: true
+[11:40:53][Info][main] WindowManager vSync: true
+[11:40:53][Info][main] ------------TestSize started-----------
+[11:40:53][Info][Window] Changed window title to WraithEngine.
+[11:40:53][Info][Window] Changed window resizable to true.
+[11:40:53][Info][Window] Changed window size to 800x600.
+[11:40:53][Info][Window] Changed window VSync to false.
+[11:40:53][Info][Window] Changed window size to 600x400.
+[11:40:53][Info][Window] Building GLFW window.
+[11:40:53][Info][main] Linking GLFW window to OpenGL.
+[11:40:53][Info][main] WindowManager width: 600
+[11:40:53][Info][main] Screen width: 600
+[11:40:53][Info][main] ------------TestWindowBuilderNull started-----------
+[11:40:53][Info][main] ------------TestWindowSetName started-----------
+[11:40:53][Info][Window] Changed window title to WraithEngine.
+[11:40:53][Info][Window] Changed window resizable to true.
+[11:40:53][Info][Window] Changed window size to 800x600.
+[11:40:53][Info][Window] Changed window VSync to false.
+[11:40:53][Info][Window] Changed window title to testName.
+[11:40:53][Info][Window] Building GLFW window.
+[11:40:54][Info][main] Linking GLFW window to OpenGL.
+[11:40:54][Info][main] testName
+[11:40:54][Info][main] WindowManager name: testName
+[11:40:54][Info][main] ------------TestWindowResizable started-----------
+[11:40:54][Info][Window] Changed window title to WraithEngine.
+[11:40:54][Info][Window] Changed window resizable to true.
+[11:40:54][Info][Window] Changed window size to 800x600.
+[11:40:54][Info][Window] Changed window VSync to false.
+[11:40:54][Info][Window] Changed window resizable to true.
+[11:40:54][Info][Window] Building GLFW window.
+[11:40:54][Info][main] Linking GLFW window to OpenGL.
+[11:40:54][Info][main] WindowManager resizable: true
+[11:40:54][Info][main] ------------ALL WINDOW TESTS COMPLETE-----------

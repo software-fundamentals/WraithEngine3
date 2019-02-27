@@ -23,6 +23,7 @@ public class WindowTest {
 
 	}
 	
+	
 	/*
 	 * Tests changing the size of the window, and checking
 	 * that the Screen is appropriately set to the same size.
@@ -30,7 +31,7 @@ public class WindowTest {
     @Test
     public void TestSize() throws InterruptedException
     {
-    	
+    	Log.infof("------------TestSize started-----------");
 		Graphics _graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
 		
 		WindowBuilder _windowBuilder = new WindowBuilder(WindowEngine.GLFW,WindowListenerType.DEFAULT).setName("WraithEngine")
@@ -62,7 +63,7 @@ public class WindowTest {
      */
     @Test(expected = NullPointerException.class)
     public void TestWindowBuilderNull() {
-    	
+    	Log.infof("------------TestWindowBuilderNull started-----------");    	
 
     	Graphics _graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
         WindowBuilder _windowBuilder = new WindowBuilder(null,null);
@@ -75,6 +76,7 @@ public class WindowTest {
      */
     @Test
     public void TestWindowBuilderNoListener() {
+    	Log.infof("------------TestWindowBuilderNoListener started-----------");
     	Graphics _graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
     	
     	WindowBuilder noListener = new WindowBuilder(WindowEngine.GLFW,WindowListenerType.NO_LISTENER).setName("WraithEngine")
@@ -101,7 +103,7 @@ public class WindowTest {
      */
     @Test
     public void TestWindowSetVSync() {
-    	
+    	Log.infof("------------TestWindowSetVSync started-----------");
 		Graphics _graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
 		
 		WindowBuilder _windowBuilder = new WindowBuilder(WindowEngine.GLFW,WindowListenerType.DEFAULT).setName("WraithEngine")
@@ -133,7 +135,7 @@ public class WindowTest {
      */
     @Test
     public void TestWindowName() {
-    	
+    	Log.infof("------------TestWindowSetName started-----------");
 		Graphics _graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
 		
 		WindowBuilder _windowBuilder = new WindowBuilder(WindowEngine.GLFW,WindowListenerType.DEFAULT).setName("WraithEngine")
@@ -160,7 +162,7 @@ public class WindowTest {
      */
     @Test
     public void TestWindowResizable() {
-    	
+    	Log.infof("------------TestWindowResizable started-----------");
 		Graphics _graphics = GraphicsFactory.createInstance(GraphicsFactory.OPENGL_ENGINE);
 		
 		WindowBuilder _windowBuilder = new WindowBuilder(WindowEngine.GLFW,WindowListenerType.DEFAULT).setName("WraithEngine")
@@ -179,6 +181,8 @@ public class WindowTest {
 		Log.infof("WindowManager resizable: true");
         assertEquals(true,_window.isResizable());
         
+        
+    	Log.infof("------------ALL WINDOW TESTS COMPLETE-----------");
         
     }
     
