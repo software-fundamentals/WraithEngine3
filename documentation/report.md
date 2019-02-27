@@ -139,13 +139,8 @@ For each team member, how much time was spent in
 
 5. analyzing code/output
   * William - 8 hours
-<<<<<<< HEAD:report.md
   * Miguel - 12 hours
   * Sebastian - 8 hours
-=======
-  * Miguel -
-  * Sebastian -
->>>>>>> documentation:documentation/report.md
   * Moa - 7 hours
   * Josefin - 6 hours
 
