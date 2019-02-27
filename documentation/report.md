@@ -92,7 +92,7 @@ in a system like this, since there are a lot of dependencies. Tests for the Wind
 and from having created a window through the window builder, the GLFWWindow and WindowHandler were also
 tested in various ways. 
 
-####Related Issue
+#### Related Issue
 
 See [#4](https://github.com/software-fundamentals/WraithEngine3/issues/4).
 
