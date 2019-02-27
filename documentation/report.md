@@ -69,9 +69,10 @@ See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
 ## Existing test cases relating to refactored code
 
 ## The refactoring carried out
-
+### UML diagram before refactoring
 ![UML diagram before refactoring](./old_uml.png)
 
+### UML diagram after refactoring
 ![UML diagram after refactoring](./new_uml.png)
 
 ## Test logs
