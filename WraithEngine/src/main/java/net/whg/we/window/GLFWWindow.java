@@ -9,89 +9,46 @@ import org.lwjgl.system.MemoryUtil;
 import net.whg.we.rendering.Graphics;
 import net.whg.we.utils.logging.Log;
 
-public class GLFWWindow implements Window
+/**
+ * The GLFWWindow class implements the Window interface and
+ * ties with GLFW, a C++ library for handling window management.
+ */
+public class GLFWWindow extends AbstractDesktopWindow
 {
-	private String _name = "WraithEngine Project";
-	private boolean _resizable = false;
-	private boolean _vSync = false;
-	private int _width = 640;
-	private int _height = 480;
 	private long _windowId = 0;
-	private QueuedWindow _window;
 	private Object _lock = new Object();
 	private float _mouseX;
 	private float _mouseY;
+	private WindowCallback _windowCallback;
 
-	@Override
-	public void setName(String name)
+	public GLFWWindow()
 	{
-		if (isWindowOpen())
-			return;
-
-		_name = name;
-		Log.infof("Changed window title to %s.", name);
-
-		if (_window != null)
-			_window.addEvent(() ->
-			{
-				_window.setNameInstant(_name);
-			});
+		super("WraithEngine Project", false, false, 640, 480);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void setResizable(boolean resizable)
+	public void setWindowCallback(WindowCallback windowCallback)
 	{
-		if (isWindowOpen())
-			return;
-
-		_resizable = resizable;
-		Log.infof("Changed window resizable to %s.", resizable);
-
-		if (_window != null)
-			_window.addEvent(() ->
-			{
-				_window.setResizableInstant(_resizable);
-			});
+		_windowCallback = windowCallback;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void setVSync(boolean vSync)
-	{
-		if (isWindowOpen())
-			return;
-
-		_vSync = vSync;
-		Log.infof("Changed window VSync to %s.", vSync);
-
-		if (_window != null)
-			_window.addEvent(() ->
-			{
-				_window.setVSyncInstant(_vSync);
-			});
-	}
-
-	@Override
-	public void setSize(int width, int height)
-	{
-		if (isWindowOpen())
-			return;
-
-		_width = width;
-		_height = height;
-		Log.infof("Changed window size to %dx%d.", width, height);
-
-		if (_window != null)
-			_window.addEvent(() ->
-			{
-				_window.setSizeInstant(_width, _height);
-			});
-	}
-
 	public boolean isWindowOpen()
 	{
 		return _windowId != MemoryUtil.NULL;
 	}
 
+	/**
+	 * buildWindow builds the current window by initializing the
+	 * GLFW library, setting window hint values, creating callbacks,
+	 * centering the window and making it visible.
+	 */
 	@Override
 	public void buildWindow()
 	{
@@ -121,13 +78,13 @@ public class GLFWWindow implements Window
 			GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
 			GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
 
-			Log.tracef("Requesting resizable, %s", _resizable);
-			if (!_resizable)
+			Log.tracef("Requesting resizable, %s", resizable());
+			if (!resizable())
 				GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
 
 			Log.trace("Building hidden window.");
 			_windowId =
-					GLFW.glfwCreateWindow(_width, _height, _name, MemoryUtil.NULL, MemoryUtil.NULL);
+				GLFW.glfwCreateWindow(width(), height(), name(), MemoryUtil.NULL, MemoryUtil.NULL);
 			Log.tracef("  Recieved window id %d.", _windowId);
 			if (_windowId == 0)
 				throw new RuntimeException("Failed to create GLFW window!");
@@ -139,11 +96,8 @@ public class GLFWWindow implements Window
 				Log.trace("Creating window size callback.");
 				GLFW.glfwSetWindowSizeCallback(_windowId, (long window, int width, int height) ->
 				{
-					if (_window != null)
-						_window.addEvent(() ->
-						{
-							_window.setSizeInstant(_width, _height);
-						});
+					if (_windowCallback != null)
+						_windowCallback.setSize(width(), height());
 				});
 
 				Log.trace("Creating key callback.");
@@ -159,11 +113,8 @@ public class GLFWWindow implements Window
 							else
 								state = KeyState.REPEATED;
 
-							if (_window != null)
-								_window.addEvent(() ->
-								{
-									_window.onKey(key, state, mods);
-								});
+							if (_windowCallback != null)
+								_windowCallback.onKey(key, state, mods);
 						});
 
 				Log.trace("Creating mouse position callback.");
@@ -177,11 +128,8 @@ public class GLFWWindow implements Window
 				Log.trace("Creating text input callback.");
 				GLFW.glfwSetCharModsCallback(_windowId, (long window, int key, int mods) ->
 				{
-					if (_window != null)
-						_window.addEvent(() ->
-						{
-							_window.onType(key, mods);
-						});
+					if (_windowCallback != null)
+						_windowCallback.onType(key, mods);
 				});
 
 				Log.unindent();
@@ -192,8 +140,8 @@ public class GLFWWindow implements Window
 			{
 				GLFWVidMode vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
-				int x = (vidmode.width() - _width) / 2;
-				int y = (vidmode.height() - _height) / 2;
+				int x = (vidmode.width() - width()) / 2;
+				int y = (vidmode.height() - height()) / 2;
 				GLFW.glfwSetWindowPos(_windowId, x, y);
 
 				Log.tracef("Set window location to %d, %d.", x, y);
@@ -206,6 +154,9 @@ public class GLFWWindow implements Window
 		Log.unindent();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void disposeWindow()
 	{
@@ -231,6 +182,10 @@ public class GLFWWindow implements Window
 		}
 	}
 
+	/**
+	 * requestClose makes a request to close the window and
+	 * sends its size to the callback object, if there is one.
+	 */
 	@Override
 	public void requestClose()
 	{
@@ -240,18 +195,20 @@ public class GLFWWindow implements Window
 			GLFW.glfwSetWindowShouldClose(_windowId, true);
 		}
 
-		if (_window != null)
-			_window.addEvent(() ->
-			{
-				_window.setSizeInstant(_width, _height);
-			});
+		if (_windowCallback != null)
+			_windowCallback.setSize(width(), height());
 	}
 
+	/**
+	 * endFrame sets the mouse position and swaps the front
+	 * and back buffers of the window.
+	 * @return the value of the close flag of the window.
+	 */
 	@Override
 	public boolean endFrame()
 	{
-		if (_window != null)
-			_window.onMouseMove(_mouseX, _mouseY);
+		if (_windowCallback != null)
+			_windowCallback.onMouseMove(_mouseX, _mouseY);
 
 		synchronized (_lock)
 		{
@@ -260,6 +217,14 @@ public class GLFWWindow implements Window
 		}
 	}
 
+	/**
+	 * initGraphics is a synchronized function which initializes
+	 * the specified graphics and makes the window the current of
+	 * the calling thread. If vSync() is true, there has to be one
+	 * screen update before swapping buffers, otherwise no updates
+	 * are required.
+	 * @param graphics the Graphics that should be initialized.
+	 */
 	@Override
 	public void initGraphics(Graphics graphics)
 	{
@@ -270,25 +235,27 @@ public class GLFWWindow implements Window
 			GLFW.glfwMakeContextCurrent(_windowId);
 			graphics.init();
 
-			if (_vSync)
+			if (vSync())
 				GLFW.glfwSwapInterval(1);
 			else
 				GLFW.glfwSwapInterval(0);
 		}
 	}
 
-	@Override
-	public void setQueuedWindow(QueuedWindow window)
-	{
-		_window = window;
-	}
-
+	/**
+	 * updateWindow puts the thread to sleep until there is at least one event in the event queue
+	 * or the timeout (0.001 seconds) is reached.
+	 */
 	@Override
 	public void updateWindow()
 	{
 		GLFW.glfwWaitEventsTimeout(0.001f);
 	}
 
+	/**
+	 * setCursorEnabled toggles the visibility of the cursor.
+	 * @param cursorEnabled boolean that displays (true) or hides (false) the cursor.
+	 */
 	@Override
 	public void setCursorEnabled(boolean cursorEnabled)
 	{
