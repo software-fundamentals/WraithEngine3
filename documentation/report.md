@@ -70,9 +70,9 @@ See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
 
 ## The refactoring carried out
 
-![UML diagram before refactoring](https://github.com/software-fundamentals/WraithEngine3/documentation/old_uml.png)
+![UML diagram before refactoring](./old_uml.png)
 
-![UML diagram after refactoring](https://github.com/software-fundamentals/WraithEngine3/documentation/new_uml.png)
+![UML diagram after refactoring](./new_uml.png)
 
 ## Test logs
 
