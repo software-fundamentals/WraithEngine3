@@ -97,6 +97,9 @@ tested in various ways.
 See [#4](https://github.com/software-fundamentals/WraithEngine3/issues/4).
 
 ## The refactoring carried out
+### Refactoring branch
+The entire refactoring diff can be found [here](https://github.com/software-fundamentals/WraithEngine3/pull/14/files).
+
 ### UML diagram before refactoring
 ![UML diagram before refactoring](./old_uml.png)
 
