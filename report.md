@@ -81,6 +81,21 @@ See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
 
 ## Existing test cases relating to refactored code
 
+#### Description
+There were no tests for the window package as a whole. Having tests can help improve the robustness of the system,
+so that bugs can be spotted faster from failing tests, when something has been changed.
+
+#### Refactoring
+
+To solve this we simply implemented tests for the window package as whole. Testing individual classes is hard
+in a system like this, since there are a lot of dependencies. Tests for the WindowBuilder were created,
+and from having created a window through the window builder, the GLFWWindow and WindowHandler were also
+tested in various ways. 
+
+####Related Issue
+
+See [#4](https://github.com/software-fundamentals/WraithEngine3/issues/4).
+
 ## The refactoring carried out
 
 (Link to) a UML diagram and its description
@@ -99,51 +114,51 @@ For each team member, how much time was spent in
   * All group members - 7 hours
 
 2. discussions within parts of the group
-  * William -  2 hours
-  * Miguel -
-  * Sebastian -
+  * William -  4 hours
+  * Miguel - 4 hours
+  * Sebastian - 4 hours
   * Moa - 3 hours
   * Josefin - 3 hours
 
 3. reading documentation
   * William - 30 min
-  * Miguel -
-  * Sebastian -
+  * Miguel - 30 min
+  * Sebastian - 30 min
   * Moa - 30 min
   * Josefin - 30 min
 
 4. configuration
   * William - 1 hour 30 min
-  * Miguel -
-  * Sebastian -
+  * Miguel - 40 min
+  * Sebastian - 30 min
   * Moa - 1.5 hour
   * Josefin - 1 hour
 
 5. analyzing code/output
-  * William - 11 hours
-  * Miguel -
-  * Sebastian -
+  * William - 8 hours
+  * Miguel - 12 hours
+  * Sebastian - 8 hours
   * Moa - 7 hours
   * Josefin - 6 hours
 
 6. writing documentation
   * William - 3 hours
-  * Miguel -
-  * Sebastian -
+  * Miguel - 6 hours
+  * Sebastian - 3 hours
   * Moa - 4.5 hours
   * Josefin - 6 hours
 
 7. writing code
   * William - 6 hours
-  * Miguel -
-  * Sebastian -
+  * Miguel - 7 hours
+  * Sebastian - 6 hours
   * Moa - 6.5
   * Josefin - 3 hours
 
 8. running code
   * William - 30 min
-  * Miguel -
-  * Sebastian -
+  * Miguel - 1 hour
+  * Sebastian - 1 hour
   * Moa - 1 hour
   * Josefin - 30 min
 
