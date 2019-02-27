@@ -82,8 +82,11 @@ See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
 ## Existing test cases relating to refactored code
 
 ## The refactoring carried out
+### UML diagram before refactoring
+![UML diagram before refactoring](./old_uml.png)
 
-(Link to) a UML diagram and its description
+### UML diagram after refactoring
+![UML diagram after refactoring](./new_uml.png)
 
 ## Test logs
 
@@ -120,7 +123,7 @@ For each team member, how much time was spent in
   * Josefin - 1 hour
 
 5. analyzing code/output
-  * William - 11 hours
+  * William - 8 hours
   * Miguel -
   * Sebastian -
   * Moa - 7 hours
@@ -148,7 +151,6 @@ For each team member, how much time was spent in
   * Josefin - 30 min
 
 ## Overall experience
-
 *What are your main take-aways from this project? What did you learn?*
 
 First of all, I think we can safely say we've learned a whole lot about how a game engine
