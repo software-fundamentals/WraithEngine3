@@ -2,6 +2,8 @@ language: java
 
 jdk:
   - oraclejdk8
+  
+os: windows
 
 before_install:
   - cd WraithEngine
