@@ -79,7 +79,7 @@ All functions and classes in the package `whg.net.we.window` were documented in 
 #### Related Issue
 See [#3](https://github.com/software-fundamentals/WraithEngine3/issues/3).
 
-## Existing test cases relating to refactored code
+### 6: Existing test cases relating to refactored code
 
 #### Description
 There were no tests for the window package as a whole. Having tests can help improve the robustness of the system,
