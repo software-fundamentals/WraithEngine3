@@ -92,6 +92,7 @@ in a system like this, since there are a lot of dependencies. Tests for the Wind
 and from having created a window through the window builder, the GLFWWindow and WindowHandler were also
 tested in various ways. 
 
+
 #### Related Issue
 
 See [#4](https://github.com/software-fundamentals/WraithEngine3/issues/4).
@@ -108,7 +109,13 @@ The entire refactoring diff can be found [here](https://github.com/software-fund
 
 ## Test logs
 
-Overall results with link to a copy of the logs (before/after refactoring).
+There were no previous tests, so no previous test log exists.
+The test for the new log can be found here.
+
+[TestLog](https://github.com/software-fundamentals/WraithEngine3/blob/refactor/TESTOUTPUT.txt).
+
+The reason for travis failing is because Travis does not support Windows, and the
+tests are for GLFW, which are for Windows.
 
 The refactoring itself is documented by the git log.
 
