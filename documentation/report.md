@@ -55,6 +55,7 @@ There was a large dependency between the WindowManager (previously QueuedWindow)
 
 #### Refactoring
 To change from tight to loose coupling between the classes, we decided to make the Window interface unaware of WindowManager. Now, when a variable is to be updated in the Window, the WindowManager calls the relevant function in Window which returns a boolean wheter it was able to update or not. If the return value was true, the WindowManager will update its corresponding variable as well by putting the variable's update function in the event queue.
+However, if the window library (i.e. GLFW) detects activity by the user, such as keyboard inputs or manual window resizing, WindowManager needs to get this information somehow. We solved this by making a WindowCallback class. This class sole purpose is to handle the user input detected by the window library and forward it to the WindowManager.
 
 #### Related Issue
 See [#16](https://github.com/software-fundamentals/WraithEngine3/issues/16).
@@ -71,7 +72,7 @@ See [#8](https://github.com/software-fundamentals/WraithEngine3/issues/8).
 
 ### 5: Documentation
 #### Description
-Most of the Window related functions and classes were undocumented, this is problemetatic when new develoeprs are joining the project.
+Most of the Window related functions and classes were undocumented, this is problematic when new developers are joining the project.
 
 #### Refactoring
 All functions and classes in the package `whg.net.we.window` were documented in javadoc style.
