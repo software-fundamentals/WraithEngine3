@@ -105,8 +105,12 @@ The entire refactoring diff can be found [here](https://github.com/software-fund
 ### UML diagram before refactoring
 ![UML diagram before refactoring](./old_uml.png)
 
+Here we see the codependency between QueuedWindow and Window/GLFWWindow. GLFWWindow knows a lot about the internals of QueuedWindow, even though QueuedWindow is the one that's supposed to manage GLFWWindow. We also see that the implementation of a new window engine besides GLFW would introduce a lot of code duplication, since the behaviour of several methods, such as setName and setSize, are common across all window engines.
+
 ### UML diagram after refactoring
 ![UML diagram after refactoring](./new_uml.png)
+
+By adding AbstractDesktopWindow, we have, among other things, provided the implementation for common methods to avoid code duplication if a new window engine is added. We also see that the other new class, WindowCallback, handles the communication from the Window to the WindowManager. Notice that the confusing name QueuedWindow was changed to WindowManager.
 
 ## Test logs
 
